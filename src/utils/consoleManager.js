@@ -1,4 +1,4 @@
-const VITE_ENV= import.meta.env.env
+const VITE_ENV= import.meta.env.VITE_ENV
 
 class ConsoleManager {
     log(data) {
