@@ -13,7 +13,7 @@ export default function Dashboard() {
       height="60vh"
       color="blue.500"
     >
-      Hello Welcome to the dashboard
+      Welcome to the dashboard
     </Text>
   );
 }
