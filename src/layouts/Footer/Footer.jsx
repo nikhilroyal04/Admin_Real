@@ -1,19 +1,24 @@
 import React from "react";
-import { Text } from "@chakra-ui/react";
+import { Box, Text, useBreakpointValue } from "@chakra-ui/react";
 
 export default function Footer() {
+  const fontSize = useBreakpointValue({ base: "lg", md: "xl", lg: "2xl" });
+
   return (
-    <Text
-      fontSize="2xl"
-      fontWeight="bold"
+    <Box
+      as="footer"
+      bg="white"
+      color="black"
+      py={{ base: "4", md: "6", lg: "8" }}
       textAlign="center"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      height="20vh"
-      color="green.500"
+      bottom="0"
+      width="100%"
     >
-      Footer Content goes here
-    </Text>
+      <Text
+       fontWeight="bold"
+      >
+        © 2024 Teppl... All rights reserved.
+      </Text>
+    </Box>
   );
 }

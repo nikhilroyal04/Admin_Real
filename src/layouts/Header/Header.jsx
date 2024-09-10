@@ -1,19 +1,18 @@
-import React from "react";
-import { Text } from "@chakra-ui/react";
+// Header.js
+import React from 'react';
+import { Box, Flex, Heading } from '@chakra-ui/react';
 
-export default function Header() {
+
+const Header = () => {
   return (
-    <Text
-      fontSize="2xl"
-      fontWeight="bold"
-      textAlign="center"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      height="20vh"
-      color="red.500"
-    >
-      Design your header
-    </Text>
+    <Box as="header" bg="teal.500" color="white" padding="4">
+      <Flex align="center" justify="space-between" maxW="1200px" mx="auto">
+        <Heading>
+          Dashboard
+        </Heading>
+      </Flex>
+    </Box>
   );
-}
+};
+
+export default Header;

@@ -34,6 +34,7 @@ export default function User_List() {
   }
 
   consoleManager.log("User data:", userData);
+  consoleManager.error("User error:", error);
 
   return (
     <Text
