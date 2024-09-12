@@ -1,47 +1,32 @@
 import React from 'react';
-import {
-  Box,
-  Stack,
-  Link,
-  useDisclosure,
-  IconButton,
-  Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  Button,
-  RadioGroup,
-  Radio
-} from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
+import { Box, Text } from '@chakra-ui/react';
 
-const Sidebar = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [placement, setPlacement] = React.useState('left');
-
+function Sidebar() {
   return (
-    <>
-      <Stack direction="row" mb="4">
-      </Stack>
-      <Button colorScheme="blue" onClick={onOpen}>
-        Open Drawer
-      </Button>
-      <Drawer placement={placement} onClose={onClose} isOpen={isOpen}>
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader borderBottomWidth="1px">Admin Panel</DrawerHeader>
-          <DrawerBody>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-    </>
+    <Box display="flex">
+      {/* Fixed Sidebar */}
+      <Box
+        as="aside"
+        position="fixed"
+        left="0"
+        top="0"
+        width="290px"
+        height="100vh"
+        bg="white"
+        color="black"
+        p="4"
+        zIndex="1"
+      >
+        {/* Sidebar Header */}
+        <Box  borderBottomWidth="1px" borderBottomColor="gray.200" >
+          <Text fontSize="40px" fontWeight="bold">
+           Admin Panel
+          </Text>
+        </Box>
+        
+      </Box>
+    </Box>
   );
-};
+}
 
 export default Sidebar;
