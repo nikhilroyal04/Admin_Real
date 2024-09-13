@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Text,Divider } from '@chakra-ui/react';
 
 function Sidebar() {
   return (
@@ -7,7 +7,7 @@ function Sidebar() {
       {/* Fixed Sidebar */}
       <Box
         as="aside"
-        position="fixed"
+        position="related"
         left="0"
         top="0"
         width="290px"
@@ -23,7 +23,7 @@ function Sidebar() {
            Admin Panel
           </Text>
         </Box>
-        
+        <Divider />
       </Box>
     </Box>
   );
