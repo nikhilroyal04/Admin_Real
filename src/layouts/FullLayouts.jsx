@@ -1,25 +1,30 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import Header from './Header/Header';
-import Footer from './Footer/Footer';
-import Sidebar from './Sidebar/Sidebar';
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, useDisclosure } from "@chakra-ui/react";
+import Header from "./Header/Header";
+import Sidebar from "./Sidebar/Sidebar";
+import Footer from "./Footer/Footer";
+import { Outlet } from "react-router-dom";
 
 const FullLayout = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      minHeight="100vh"
-      bg="white"
-    >
-      <Header />
-      <Flex flex="1">
-        <Sidebar />
-        <Box as="main" flex="1" p={4}>
-          <Outlet />
-        </Box>
-      </Flex>
+    <Box>
+      {/* Pass onOpen to Header to trigger the sidebar on small screens */}
+      <Header onOpen={onOpen} />
+
+      {/* Pass isOpen and onClose to Sidebar to handle drawer opening/closing */}
+      <Sidebar isOpen={isOpen} onClose={onClose} />
+
+      <Box
+        ml={{ base: 0, md: "250px" }}
+        pt="60px"
+        pb="60px"
+        bg="gray.100"
+        minHeight="100vh"
+      >
+        <Outlet />
+      </Box>
+
       <Footer />
     </Box>
   );

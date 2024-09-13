@@ -1,37 +1,56 @@
-import React from 'react';
-import { Box, Text, Divider } from '@chakra-ui/react';
+import { Box, Drawer, DrawerContent, IconButton, useDisclosure, Text } from "@chakra-ui/react";
+import { CloseIcon } from "@chakra-ui/icons";
 
-function Sidebar() {
+const Sidebar = ({ isOpen, onClose }) => {
   return (
-    <Box
-      as="aside"
-      position="fixed" 
-      left="0"
-      top="0"
-      width="300px"
-      height="100vh"
-      bg="white"
-      color="black"
-      p="4"
-      borderRightWidth="1px"
-      borderRightColor="gray.200"
-      zIndex="1"
-      display={{ base: "none", md: "block" }} 
-    >
-     <Box borderBottomWidth="1px" borderBottomColor="gray.200" >
-        <Text fontSize="35" fontWeight="bold" mb={8}>
-          Admin Panel
-        </Text>
+    <>
+      {/* Sidebar for large screens */}
+      <Box
+        as="nav"
+        position="fixed"
+        left="0"
+        width={{ base: "full", md: "250px" }}
+        height="100vh"
+        bg="gray.800"
+        color="white"
+        display={{ base: "none", md: "block" }}
+      >
+        <Box p={4}>
+          {/* Sidebar content */}
+          <Text>Dashboard</Text>
+          <Text>Users</Text>
+          {/* Add more sidebar items */}
+        </Box>
       </Box>
-      <Divider />
-      <Box mt="4">
-        <Text>Dashboard</Text>
-        <Text>Users</Text>
-        <Text>Settings</Text>
-        <Text>Reports</Text>
-      </Box>
-    </Box>
+
+      {/* Drawer for small screens */}
+      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+        <DrawerContent>
+          <Box p={4} bg="gray.800" color="white" height="100vh" position="relative">
+            {/* Close Button at the top right corner */}
+            <IconButton
+              icon={<CloseIcon />}
+              position="absolute"
+              top="10px"
+              right="10px"
+              onClick={onClose}
+              aria-label="Close menu"
+              bg="transparent"
+              color="white"
+              _hover={{ bg: "gray.700" }}
+            />
+
+            {/* Sidebar content */}
+            <Box mt={10}> 
+              <Text>Dashboard</Text>
+              <Text>Users</Text>
+              {/* Add more sidebar items */}
+            </Box>
+          </Box>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
-}
+};
 
 export default Sidebar;
