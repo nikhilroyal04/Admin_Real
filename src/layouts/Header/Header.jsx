@@ -41,7 +41,6 @@ const Header = () => {
             borderRadius={20}
             mr={{ base: 4, md: 5 }}
           />
-          {/* Show HamburgerIcon on small screens, hide on large screens */}
           <HamburgerIcon 
             boxSize={iconSize} 
             color='gray.600' 

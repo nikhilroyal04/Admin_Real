@@ -2,7 +2,8 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header/Header';
 import Footer from './Footer/Footer';
-import { Box } from '@chakra-ui/react';
+import Sidebar from './Sidebar/Sidebar';
+import { Box, Flex } from '@chakra-ui/react';
 
 const FullLayout = () => {
   return (
@@ -10,13 +11,15 @@ const FullLayout = () => {
       display="flex"
       flexDirection="column"
       minHeight="100vh"
-      bg="white" 
-      
+      bg="white"
     >
       <Header />
-      <Box as="main" flex="1" p={4}>
-        <Outlet />
-      </Box>
+      <Flex flex="1">
+        <Sidebar />
+        <Box as="main" flex="1" p={4}>
+          <Outlet />
+        </Box>
+      </Flex>
       <Footer />
     </Box>
   );
