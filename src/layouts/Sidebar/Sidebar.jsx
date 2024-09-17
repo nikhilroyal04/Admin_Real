@@ -25,43 +25,47 @@ const Sidebar = ({ isOpen, onClose }) => {
         color="black"
         display={{ base: "none", md: "block" }}
       >
-        <Box p={10}>
-          {/* Sidebar content */}
-          <Text fontSize="2xl" fontWeight="bold" mb={8}>
-            Admin Panel
-          </Text>
-          <Text
-            mb={4}
-            fontWeight={activeItem === "Dashboard" ? "bold" : "normal"}
-            color={activeItem === "Dashboard" ? "blue.500" : "black"}
-            cursor="pointer"
-            onClick={() => handleItemClick("Dashboard")}
-            display="flex"
-            alignItems="center"
-          >
-            <MdDashboard size={20} style={{ marginRight: 8 }} /> {/* Add the icon here */}
-            Dashboard
-          </Text>
-          <Text
-            mb={4}
-            fontWeight={activeItem === "Login" ? "bold" : "normal"}
-            color={activeItem === "Login" ? "blue.500" : "black"}
-            cursor="pointer"
-            onClick={() => handleItemClick("Login")}
-          >
-           Login
-          </Text>
-          <Text
-            mb={4}
-            fontWeight={activeItem === "Settings" ? "bold" : "normal"}
-            color={activeItem === "Settings" ? "blue.500" : "black"}
-            cursor="pointer"
-            onClick={() => handleItemClick("Settings")}
-          >
-            Settings
-          </Text>
-          {/* Add more sidebar items here */}
-        </Box>
+        <Box p={10} w="250px" borderRight="1px" borderColor="gray.200" h="100vh">
+      {/* Drawer Header */}
+      <Box borderBottomWidth="1px"  borderColor="gray.200" pb={7} mb={8}>
+        <Text fontSize="2xl" fontWeight="bold">
+          Admin Panel
+        </Text>
+      </Box>
+
+      {/* Sidebar Items */}
+      <Text
+        mb={4}
+        fontWeight={activeItem === "Dashboard" ? "bold" : "normal"}
+        color={activeItem === "Dashboard" ? "blue.500" : "black"}
+        cursor="pointer"
+        onClick={() => handleItemClick("Dashboard")}
+        display="flex"
+        alignItems="center"
+      >
+        <MdDashboard size={20} style={{ marginRight: 8 }} />
+        Dashboard
+      </Text>
+      <Text
+        mb={4}
+        fontWeight={activeItem === "Login" ? "bold" : "normal"}
+        color={activeItem === "Login" ? "blue.500" : "black"}
+        cursor="pointer"
+        onClick={() => handleItemClick("Login")}
+      >
+        Login
+      </Text>
+      <Text
+        mb={4}
+        fontWeight={activeItem === "Settings" ? "bold" : "normal"}
+        color={activeItem === "Settings" ? "blue.500" : "black"}
+        cursor="pointer"
+        onClick={() => handleItemClick("Settings")}
+      >
+        Settings
+      </Text>
+      {/* Add more sidebar items here */}
+    </Box>
       </Box>
 
       {/* Drawer for small screens */}

@@ -1,18 +1,9 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-  Box,
-  Button,
-  Container,
-  FormControl,
-  FormLabel,
-  Input,
-  Stack,
-  Heading,
-  Text,
-  useToast,
-  Spinner,
-} from "@chakra-ui/react";
-import { motion } from "framer-motion";
+  Box, Button, Container, FormControl, FormLabel, Input, Stack, Heading, Text, useToast, Spinner
+} from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 
 const pageTransition = {
   initial: { opacity: 0, x: -200 },
@@ -21,9 +12,10 @@ const pageTransition = {
   transition: { duration: 0.6 },
 };
 
-const LoginPage = () => {
+const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -32,13 +24,14 @@ const LoginPage = () => {
     // Simulate form submission delay
     setTimeout(() => {
       toast({
-        title: "Login successful.",
-        description: "You have been logged in.",
-        status: "success",
+        title: 'Login successful.',
+        description: 'You have been logged in.',
+        status: 'success',
         duration: 3000,
         isClosable: true,
       });
       setIsSubmitting(false);
+      navigate('/home'); // Redirect to home page or dashboard
     }, 2000);
   };
 
@@ -49,7 +42,7 @@ const LoginPage = () => {
       exit="exit"
       transition={pageTransition.transition}
       variants={pageTransition}
-      style={{ width: "100%" }}
+      style={{ width: '100%' }}
     >
       <Container
         maxW="100vw"
@@ -66,7 +59,7 @@ const LoginPage = () => {
           borderWidth={1}
           borderRadius="3xl"
           bg="white"
-          width={{ base: "90%", lg: "550px" }}
+          width={{ base: '90%', lg: '550px' }}
           boxShadow="xl"
           display="flex"
           flexDirection="column"
@@ -88,8 +81,8 @@ const LoginPage = () => {
                   bg="gray.50"
                   borderRadius="lg"
                   boxShadow="sm"
-                  _hover={{ boxShadow: "md" }}
-                  width={{ base: "100%", lg: 350 }}
+                  _hover={{ boxShadow: 'md' }}
+                  width={{ base: '100%', lg: 350 }}
                 />
               </FormControl>
               <FormControl id="password" isRequired>
@@ -100,8 +93,8 @@ const LoginPage = () => {
                   bg="gray.50"
                   borderRadius="lg"
                   boxShadow="sm"
-                  _hover={{ boxShadow: "md" }}
-                  width={{ base: "100%", lg: 350 }}
+                  _hover={{ boxShadow: 'md' }}
+                  width={{ base: '100%', lg: 350 }}
                 />
               </FormControl>
               <Button
@@ -111,15 +104,15 @@ const LoginPage = () => {
                 width="full"
                 borderRadius="md"
                 boxShadow="md"
-                sx={{ width: 250, mx: "auto" }}
+                sx={{ width: 250, mx: 'auto' }}
                 isDisabled={isSubmitting}
                 _hover={{
-                  backgroundColor: "teal.400",
-                  transform: "scale(1.05)",
-                  transition: "0.3s",
+                  backgroundColor: 'teal.400',
+                  transform: 'scale(1.05)',
+                  transition: '0.3s',
                 }}
               >
-                {isSubmitting ? <Spinner size="sm" /> : "Login"}
+                {isSubmitting ? <Spinner size="sm" /> : 'Login'}
               </Button>
             </Stack>
           </form>
@@ -128,8 +121,8 @@ const LoginPage = () => {
               variant="link"
               colorScheme="teal"
               _hover={{
-                textDecoration: "underline",
-                color: "teal.700",
+                textDecoration: 'underline',
+                color: 'teal.700',
               }}
             >
               Forgot Password?
@@ -141,4 +134,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Login;
