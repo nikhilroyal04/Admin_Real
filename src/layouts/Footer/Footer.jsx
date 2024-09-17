@@ -11,7 +11,6 @@ const Footer = () => {
       bg="black"
       p={4}
       color="white"
-      position="fixed"
       bottom="0"
     >
       {/* Content container */}

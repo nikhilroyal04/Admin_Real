@@ -66,7 +66,7 @@ const Header = ({ onOpen, isMenuOpen, onToggleTheme }) => {
           onClick={onToggleTheme}
         />
         <Avatar
-          src='https://bit.ly/sage-adebayo'
+           src='https://bit.ly/dan-abramov'
           size='md'
           aria-label="User profile"
         />

@@ -1,7 +1,7 @@
-import { Box, Drawer, DrawerContent, IconButton, useDisclosure, Text, Divider } from "@chakra-ui/react";
+import { Box, Drawer, DrawerContent, DrawerOverlay, DrawerHeader, IconButton, useDisclosure, Text, Divider } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { useState } from "react";
-
+import { MdDashboard } from "react-icons/md"; // Import the Dashboard icon
 
 const Sidebar = ({ isOpen, onClose }) => {
   const [activeItem, setActiveItem] = useState("Dashboard");
@@ -11,6 +11,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     setActiveItem(item);
     // Handle navigation or other actions here
   };
+
   return (
     <>
       {/* Sidebar for large screens */}
@@ -26,45 +27,46 @@ const Sidebar = ({ isOpen, onClose }) => {
       >
         <Box p={10}>
           {/* Sidebar content */}
-          <Text fontSize="xl" fontWeight="bold" mb={10}>
+          <Text fontSize="2xl" fontWeight="bold" mb={8}>
             Admin Panel
           </Text>
-          <Divider w="full" borderColor="gray.300"  />
+          <Text
+            mb={4}
+            fontWeight={activeItem === "Dashboard" ? "bold" : "normal"}
+            color={activeItem === "Dashboard" ? "blue.500" : "black"}
+            cursor="pointer"
+            onClick={() => handleItemClick("Dashboard")}
+            display="flex"
+            alignItems="center"
+          >
+            <MdDashboard size={20} style={{ marginRight: 8 }} /> {/* Add the icon here */}
+            Dashboard
+          </Text>
+          <Text
+            mb={4}
+            fontWeight={activeItem === "Login" ? "bold" : "normal"}
+            color={activeItem === "Login" ? "blue.500" : "black"}
+            cursor="pointer"
+            onClick={() => handleItemClick("Login")}
+          >
+           Login
+          </Text>
+          <Text
+            mb={4}
+            fontWeight={activeItem === "Settings" ? "bold" : "normal"}
+            color={activeItem === "Settings" ? "blue.500" : "black"}
+            cursor="pointer"
+            onClick={() => handleItemClick("Settings")}
+          >
+            Settings
+          </Text>
+          {/* Add more sidebar items here */}
         </Box>
-        <Box p={10}>
-        <Text
-          mb={4}
-          fontWeight={activeItem === "Dashboard" ? "bold" : "normal"}
-          color={activeItem === "Dashboard" ? "blue.500" : "black"}
-          cursor="pointer"
-          onClick={() => handleItemClick("Dashboard")}
-        >
-          Dashboard
-        </Text>
-        <Text
-          mb={4}
-          fontWeight={activeItem === "Users" ? "bold" : "normal"}
-          color={activeItem === "Users" ? "blue.500" : "black"}
-          cursor="pointer"
-          onClick={() => handleItemClick("Users")}
-        >
-          Users
-        </Text>
-        <Text
-          mb={4}
-          fontWeight={activeItem === "Settings" ? "bold" : "normal"}
-          color={activeItem === "Settings" ? "blue.500" : "black"}
-          cursor="pointer"
-          onClick={() => handleItemClick("Settings")}
-        >
-          Settings
-        </Text>
-        {/* Add more sidebar items here */}
       </Box>
-      </Box>
-      {/* <Divider/> */}
+
       {/* Drawer for small screens */}
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+        <DrawerOverlay />
         <DrawerContent>
           <Box p={4} bg="gray.800" color="white" height="100vh" position="relative">
             {/* Close Button at the top right corner */}
@@ -79,6 +81,40 @@ const Sidebar = ({ isOpen, onClose }) => {
               color="white"
               _hover={{ bg: "gray.700" }}
             />
+            {/* Sidebar content in the drawer */}
+            <Box mt={10}>
+              <Text
+                mb={4}
+                fontWeight={activeItem === "Dashboard" ? "bold" : "normal"}
+                color={activeItem === "Dashboard" ? "blue.500" : "white"}
+                cursor="pointer"
+                onClick={() => handleItemClick("Dashboard")}
+                display="flex"
+                alignItems="center"
+              >
+                <MdDashboard size={20} style={{ marginRight: 8 }} /> {/* Add the icon here */}
+                Dashboard
+              </Text>
+              <Text
+                mb={4}
+                fontWeight={activeItem === "Users" ? "bold" : "normal"}
+                color={activeItem === "Users" ? "blue.500" : "white"}
+                cursor="pointer"
+                onClick={() => handleItemClick("Users")}
+              >
+                Users
+              </Text>
+              <Text
+                mb={4}
+                fontWeight={activeItem === "Settings" ? "bold" : "normal"}
+                color={activeItem === "Settings" ? "blue.500" : "white"}
+                cursor="pointer"
+                onClick={() => handleItemClick("Settings")}
+              >
+                Settings
+              </Text>
+              {/* Add more sidebar items here */}
+            </Box>
           </Box>
         </DrawerContent>
       </Drawer>
