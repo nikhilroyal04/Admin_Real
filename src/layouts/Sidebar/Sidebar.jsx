@@ -2,6 +2,12 @@ import { Box, Drawer, DrawerContent, DrawerOverlay, DrawerHeader, IconButton, us
 import { CloseIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { MdDashboard } from "react-icons/md"; // Import the Dashboard icon
+import { IoMdLogIn } from "react-icons/io";
+import { PiUserListFill } from "react-icons/pi";
+import { IoSettingsOutline } from "react-icons/io5";
+
+
+
 
 const Sidebar = ({ isOpen, onClose }) => {
   const [activeItem, setActiveItem] = useState("Dashboard");
@@ -26,102 +32,65 @@ const Sidebar = ({ isOpen, onClose }) => {
         display={{ base: "none", md: "block" }}
       >
         <Box p={10} w="250px" borderRight="1px" borderColor="gray.200" h="100vh">
-      {/* Drawer Header */}
-      <Box borderBottomWidth="1px"  borderColor="gray.200" pb={7} mb={8}>
-        <Text fontSize="2xl" fontWeight="bold">
-          Admin Panel
-        </Text>
-      </Box>
-
-      {/* Sidebar Items */}
-      <Text
-        mb={4}
-        fontWeight={activeItem === "Dashboard" ? "bold" : "normal"}
-        color={activeItem === "Dashboard" ? "blue.500" : "black"}
-        cursor="pointer"
-        onClick={() => handleItemClick("Dashboard")}
-        display="flex"
-        alignItems="center"
-      >
-        <MdDashboard size={20} style={{ marginRight: 8 }} />
-        Dashboard
-      </Text>
-      <Text
-        mb={4}
-        fontWeight={activeItem === "Login" ? "bold" : "normal"}
-        color={activeItem === "Login" ? "blue.500" : "black"}
-        cursor="pointer"
-        onClick={() => handleItemClick("Login")}
-      >
-        Login
-      </Text>
-      <Text
-        mb={4}
-        fontWeight={activeItem === "Settings" ? "bold" : "normal"}
-        color={activeItem === "Settings" ? "blue.500" : "black"}
-        cursor="pointer"
-        onClick={() => handleItemClick("Settings")}
-      >
-        Settings
-      </Text>
-      {/* Add more sidebar items here */}
-    </Box>
-      </Box>
-
-      {/* Drawer for small screens */}
-      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
-        <DrawerOverlay />
-        <DrawerContent>
-          <Box p={4} bg="gray.800" color="white" height="100vh" position="relative">
-            {/* Close Button at the top right corner */}
-            <IconButton
-              icon={<CloseIcon />}
-              position="absolute"
-              top="10px"
-              right="10px"
-              onClick={onClose}
-              aria-label="Close menu"
-              bg="transparent"
-              color="white"
-              _hover={{ bg: "gray.700" }}
-            />
-            {/* Sidebar content in the drawer */}
-            <Box mt={10}>
-              <Text
-                mb={4}
-                fontWeight={activeItem === "Dashboard" ? "bold" : "normal"}
-                color={activeItem === "Dashboard" ? "blue.500" : "white"}
-                cursor="pointer"
-                onClick={() => handleItemClick("Dashboard")}
-                display="flex"
-                alignItems="center"
-              >
-                <MdDashboard size={20} style={{ marginRight: 8 }} /> {/* Add the icon here */}
-                Dashboard
-              </Text>
-              <Text
-                mb={4}
-                fontWeight={activeItem === "Users" ? "bold" : "normal"}
-                color={activeItem === "Users" ? "blue.500" : "white"}
-                cursor="pointer"
-                onClick={() => handleItemClick("Users")}
-              >
-                Users
-              </Text>
-              <Text
-                mb={4}
-                fontWeight={activeItem === "Settings" ? "bold" : "normal"}
-                color={activeItem === "Settings" ? "blue.500" : "white"}
-                cursor="pointer"
-                onClick={() => handleItemClick("Settings")}
-              >
-                Settings
-              </Text>
-              {/* Add more sidebar items here */}
-            </Box>
+          {/* Drawer Header */}
+          <Box borderBottomWidth="1px" borderColor="gray.200" pb={7} mb={8}>
+            <Text fontSize="2xl" fontWeight="bold">
+              Admin Panel
+            </Text>
           </Box>
-        </DrawerContent>
-      </Drawer>
+
+          {/* Sidebar Items */}
+          <Text
+            mb={4}
+            fontWeight={activeItem === "Dashboard" ? "bold" : "normal"}
+            color={activeItem === "Dashboard" ? "blue.500" : "black"}
+            cursor="pointer"
+            onClick={() => handleItemClick("Dashboard")}
+            display="flex"
+            alignItems="center"
+          >
+            <MdDashboard size={20} style={{ marginRight: 8 }} />
+            Dashboard
+          </Text>
+          <Text
+            mb={4}
+            fontWeight={activeItem === "Login" ? "bold" : "normal"}
+            color={activeItem === "Login" ? "blue.500" : "black"}
+            cursor="pointer"
+            onClick={() => handleItemClick("Login")}
+            display="flex"
+            alignItems="center"
+          >
+            <IoMdLogIn size={20} style={{ marginRight: 8 }} />
+            Login
+          </Text>
+          <Text
+            mb={4}
+            fontWeight={activeItem === " UserList" ? "bold" : "normal"}
+            color={activeItem === " UserList" ? "blue.500" : "black"}
+            cursor="pointer"
+            onClick={() => handleItemClick(" UserList")}
+            display="flex"
+            alignItems="center"
+          >
+            <PiUserListFill size={20} style={{ marginRight: 8 }} />
+            UserList
+          </Text>
+          <Text
+            mb={4}
+            fontWeight={activeItem === "Settings" ? "bold" : "normal"}
+            color={activeItem === "Settings" ? "blue.500" : "black"}
+            cursor="pointer"
+            onClick={() => handleItemClick("Settings")}
+            display="flex"
+            alignItems="center"
+          >
+            <IoSettingsOutline size={20} style={{ marginRight: 8 }} />
+            Settings
+          </Text>
+          {/* Add more sidebar items here */}
+        </Box>
+      </Box>
     </>
   );
 };
