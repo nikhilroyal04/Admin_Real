@@ -71,13 +71,13 @@ export default function Dashboard() {
 
       {/* ******************************* Row - 2 *************************************** */}
       <Box p={4}>
-    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-      <Card borderRadius="md" boxShadow="sm" p={4} bg="white" w="full">
+    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} >
+      <Card borderRadius="md" boxShadow="sm" p={4} bg="#262626" w="full">
         <CardBody>
           <Text>View a summary of all your customers over the last month.</Text>
         </CardBody>
       </Card>
-      <Card borderRadius="md" boxShadow="sm" p={4} bg="white" w="full">
+      <Card borderRadius="md" boxShadow="sm" p={4} bg="#262626" w="full">
         <CardBody>
           <Text>View sales performance and trends over the past month.</Text>
         </CardBody>
@@ -88,12 +88,12 @@ export default function Dashboard() {
        {/* ******************************* Row - 3 *************************************** */}
        <Box p={4}>
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-          <Card borderRadius="md" boxShadow="sm" p={4} bg="white">
+          <Card borderRadius="md" boxShadow="sm" p={4} bg="#262626">
             <CardBody>
               <Text>View a summary of all your customers over the last month.</Text>
             </CardBody>
           </Card>
-          <Card borderRadius="md" boxShadow="sm" p={4} bg="white">
+          <Card borderRadius="md" boxShadow="sm" p={4} bg="#262626">
             <CardBody>
               <Text>View sales performance and trends over the past month.</Text>
             </CardBody>
