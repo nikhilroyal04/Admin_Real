@@ -9,17 +9,16 @@ const FullLayout = () => {
 
   return (
     <Box>
-      {/* Pass onOpen to Header to trigger the sidebar on small screens */}
       <Header onOpen={onOpen} />
 
-      {/* Pass isOpen and onClose to Sidebar to handle drawer opening/closing */}
       <Sidebar isOpen={isOpen} onClose={onClose} />
 
       <Box
         ml={{ base: 0, md: "250px" }}
         pt="60px"
         pb="60px"
-        bg="gray.100"
+        bg="#0d0c0d" // Main content background
+        color="white" // Main content text color
         minHeight="100vh"
       >
         <Outlet />

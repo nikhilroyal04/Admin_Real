@@ -16,54 +16,54 @@ export default function Dashboard() {
       >
         {/* ******************************* Row - 1 *************************************** */}
         {/* ******************************* card-1 *************************************** */}
-        <Card borderRadius="2xl" boxShadow="md" m={2} position="relative" bg="white">
+        <Card borderRadius="2xl" boxShadow="md" m={2} position="relative" bg="#262626">
           <CardBody>
             <Box position="absolute" top={5} right={8}>
               <Icon as={PiFolderOpenBold} boxSize={8} color="blue.500" />
             </Box>
-            <Text fontSize="sm" color="gray.600">Today's Money</Text> {/* Gray text color */}
-            <Text fontSize="xl" fontWeight="bold" color="gray.800">$53,897</Text> {/* Gray text color */}
+            <Text fontSize="sm" color="#8b8b8b">Today's Money</Text> {/* Gray text color */}
+            <Text fontSize="xl" fontWeight="bold" color="#a4a4a4">$53,897</Text> {/* Gray text color */}
             <Text mt={2} fontSize="sm" color="gray.600">
-              <Text color="#48BB78" fontSize="sm">+3.48% </Text>Since last month.
+              <Text color="#48BB78" fontSize="sm">+3.48% </Text> <Text color="#8b8b8b">Since last month.</Text>
             </Text> {/* Gray text color */}
           </CardBody>
         </Card>
         {/* ******************************* card-2 *************************************** */}
-        <Card borderRadius="2xl" boxShadow="md" m={2} bg="white">
+        <Card borderRadius="2xl" boxShadow="md" m={2} bg="#262626">
           <CardBody>
             <Box position="absolute" top={5} right={8}>
               <Icon as={FaUsersLine} boxSize={8} color="blue.500" />
             </Box>
-            <Text fontSize="sm" color="gray.600">Today's Users</Text> {/* Gray text color */}
-            <Text fontSize="xl" fontWeight="bold" color="gray.800">$3,200</Text> {/* Gray text color */}
+            <Text fontSize="sm" color="#8b8b8b">Today's Users</Text> {/* Gray text color */}
+            <Text fontSize="xl" fontWeight="bold" color="#a4a4a4">$3,200</Text> {/* Gray text color */}
             <Text mt={2} fontSize="sm" color="gray.600">
-              <Text color="#48BB78" fontSize="sm">+5.2% </Text>Since last month.
+              <Text color="#48BB78" fontSize="sm">+5.2% </Text> <Text color="#8b8b8b">Since last month.</Text>
             </Text> {/* Gray text color */}
           </CardBody>
         </Card>
         {/* ******************************* card-3 *************************************** */}
-        <Card borderRadius="2xl" boxShadow="md" m={2} bg="white">
+        <Card borderRadius="2xl" boxShadow="md" m={2} bg="#262626">
           <CardBody>
             <Box position="absolute" top={5} right={8}>
               <Icon as={AiFillFile} boxSize={8} color="blue.500" />
             </Box>
-            <Text fontSize="sm" color="gray.600">New Clients</Text> {/* Gray text color */}
-            <Text fontSize="xl" fontWeight="bold" color="gray.800">+2,850</Text> {/* Gray text color */}
+            <Text fontSize="sm" color="#8b8b8b">New Clients</Text> {/* Gray text color */}
+            <Text fontSize="xl" fontWeight="bold" color="#a4a4a4">$2,850</Text> {/* Gray text color */}
             <Text mt={2} fontSize="sm" color="gray.600">
-              <Text color="#F56565" fontSize="sm">-2.82% </Text> Since last month.
+              <Text color="#F56565" fontSize="sm">-2.82% </Text> <Text color="#8b8b8b">Since last month.</Text>
             </Text> {/* Gray text color */}
           </CardBody>
         </Card>
         {/* ******************************* card-4 *************************************** */}
-        <Card borderRadius="2xl" boxShadow="md" m={2} bg="white">
+        <Card borderRadius="2xl" boxShadow="md" m={2} bg="#262626">
           <CardBody>
             <Box position="absolute" top={5} right={8}>
               <Icon as={GiShoppingCart} boxSize={8} color="blue.500" />
             </Box>
-            <Text fontSize="sm" color="gray.600">Total Sales</Text> {/* Gray text color */}
-            <Text fontSize="xl" fontWeight="bold" color="gray.800">$173,000</Text> {/* Gray text color */}
+            <Text fontSize="sm" color="#8b8b8b">Total Sales</Text> {/* Gray text color */}
+            <Text fontSize="xl" fontWeight="bold" color="#a4a4a4">$173,000</Text> {/* Gray text color */}
             <Text mt={2} fontSize="sm" color="gray.600">
-              <Text color="#48BB78" fontSize="sm">-8.12% </Text> Since last month.
+              <Text color="#48BB78" fontSize="sm">-8.12% </Text> <Text color="#8b8b8b">Since last month.</Text>
             </Text> {/* Gray text color */}
           </CardBody>
         </Card>
@@ -85,7 +85,7 @@ export default function Dashboard() {
     </SimpleGrid>
   </Box>
 
-       {/* ******************************* Row - 2 *************************************** */}
+       {/* ******************************* Row - 3 *************************************** */}
        <Box p={4}>
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
           <Card borderRadius="md" boxShadow="sm" p={4} bg="white">

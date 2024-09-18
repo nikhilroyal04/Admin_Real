@@ -1,7 +1,7 @@
-import { Box, Text, IconButton, Avatar, Icon, Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
-import { HamburgerIcon, BellIcon, MoonIcon, SearchIcon } from "@chakra-ui/icons";
+import { Box, Text, IconButton, Avatar } from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
 
-const Header = ({ onOpen, isMenuOpen, onToggleTheme }) => {
+const Header = ({ onOpen, isMenuOpen }) => {
   return (
     <Box
       mt={6}
@@ -20,32 +20,11 @@ const Header = ({ onOpen, isMenuOpen, onToggleTheme }) => {
       borderBottom="1px"
       borderColor="gray.200"
     >
-      <Text fontSize="2xl" color="black" flex="1">
+      <Text fontSize="2xl" color="" flex="1">
         Dashboard
       </Text>
 
       <Box display="flex" alignItems="center" ml="auto">
-        <Box display="flex" alignItems="center" mr={4}>
-          <InputGroup>
-            <InputLeftElement>
-              <SearchIcon color="black" mb={2} />
-            </InputLeftElement>
-            <Input
-              textColor='black'
-              size='sm'
-              variant='outline'
-              width={{ base: "auto", md: "200px", ml:"3" }}
-              mr={1}
-              borderColor='#A0AEC0'
-              borderRadius='full'
-              bg='#EDF2F7'
-              placeholder="search....."
-              colorScheme="black"
-            />
-            
-          </InputGroup>
-        </Box>
-
         <IconButton
           icon={<HamburgerIcon />}
           display={{ base: "inline-flex", md: "none" }}
@@ -55,18 +34,8 @@ const Header = ({ onOpen, isMenuOpen, onToggleTheme }) => {
           aria-controls="menu"
           mr={4}
         />
-        <Icon as={BellIcon} w={6} h={6} color="black" mr={4} aria-label="Notifications" />
-        <Icon
-          as={MoonIcon}
-          w={6}
-          h={6}
-          color="black"
-          mr={4}
-          aria-label="Toggle dark mode"
-          onClick={onToggleTheme}
-        />
         <Avatar
-           src='https://bit.ly/dan-abramov'
+          src='https://bit.ly/dan-abramov'
           size='md'
           aria-label="User profile"
         />

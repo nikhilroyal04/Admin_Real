@@ -1,5 +1,4 @@
-import { Box, Text, HStack, VStack, Link, Icon } from "@chakra-ui/react";
-import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
+import { Box, Text, VStack } from "@chakra-ui/react";
 
 const Footer = () => {
   return (
@@ -11,11 +10,13 @@ const Footer = () => {
       bg="black"
       p={4}
       color="white"
+      border="2px" // Add border thickness
+      borderColor="gray.600" // Set border color
+      borderStyle="solid" // Set border style
       bottom="0"
     >
       {/* Content container */}
       <VStack spacing={4} align="center">
-       
         {/* Copyright text */}
         <Text fontSize="md" color="gray.400">
           © 2024 Admin Panel. All rights reserved.
