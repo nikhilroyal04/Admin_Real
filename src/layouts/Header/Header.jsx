@@ -17,15 +17,9 @@ const Header = ({ onOpen, isMenuOpen }) => {
       position="fixed"
       top="0"
       zIndex="999"
-      borderBottom="1px"
       borderColor="gray.200"
-    >
-      <Text fontSize="2xl" color="" flex="1">
-        Dashboard
-      </Text>
-
-      <Box display="flex" alignItems="center" ml="auto">
-        <IconButton
+    >  
+      <IconButton
           icon={<HamburgerIcon />}
           display={{ base: "inline-flex", md: "none" }}
           onClick={onOpen}
@@ -33,13 +27,29 @@ const Header = ({ onOpen, isMenuOpen }) => {
           aria-expanded={isMenuOpen}
           aria-controls="menu"
           mr={4}
-        />
+        >
+      
+        </IconButton>
+      <Text fontSize="2xl" color="" flex="1">
+        Dashboard
+      </Text>
+      <Box display="flex" alignItems="center" ml="auto">
         <Avatar
           src='https://bit.ly/dan-abramov'
           size='md'
           aria-label="User profile"
         />
       </Box>
+      <Text display={{ base: "inline-flex", md: "none" }}
+        onClick={onOpen}
+        aria-label="Open menu"
+        aria-expanded={isMenuOpen}
+        aria-controls="menu"
+        mr={3}
+        ml={3} 
+        Color='white'
+        >
+       Welcome User</Text>
     </Box>
   );
 };
