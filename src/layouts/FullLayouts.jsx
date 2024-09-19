@@ -10,9 +10,7 @@ const FullLayout = () => {
   return (
     <Box>
       <Header onOpen={onOpen} />
-
       <Sidebar isOpen={isOpen} onClose={onClose} />
-
       <Box
         ml={{ base: 0, md: "250px" }}
         pt="60px"
@@ -23,8 +21,7 @@ const FullLayout = () => {
       >
         <Outlet />
       </Box>
-
-      <Footer />
+     <Footer />
     </Box>
   );
 };
