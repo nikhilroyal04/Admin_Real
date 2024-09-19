@@ -1,6 +1,6 @@
-import { Box, Text, CloseButton, Flex } from "@chakra-ui/react";
+import { Box, Text, CloseButton } from "@chakra-ui/react";
 import { useState } from "react";
-import DataItem from '../ArrayData/DataItem'; // Ensure this path is correct
+import DataItem from "../ArrayData/DataItem"; // Ensure this path is correct
 
 const Sidebar = ({ isOpen, onClose }) => {
   const [activeItem, setActiveItem] = useState("Dashboard");
@@ -24,24 +24,22 @@ const Sidebar = ({ isOpen, onClose }) => {
       display={isOpen ? "block" : { base: "none", md: "block" }} // Show on mobile if open
       zIndex="1000"
     >
-      <Flex justifyContent="space-between" alignItems="center" p={4}>
-        <Text
-          display={{ base: "inline-flex", md: "none" }}
-          onClick={onClose}
-          aria-label="Open menu"
-          color="white"
-        >
-          Welcome User
-        </Text>
-        <CloseButton display={{ base: "inline-flex", md: "none" }} onClick={onClose} />
-      </Flex>
+      {/* Close Button Positioned in the Top-Right Corner */}
+      <CloseButton
+        position="absolute"
+        display={{base: "flex", md: "none"}}
+        top="10px"
+        right="10px"
+        fontSize={15}
+        onClick={onClose}
+      />
 
-      <Box borderBottomWidth="1px" borderColor="gray.700" pb={7}>
+      <Box borderBottomWidth="1px" borderColor="gray.700" pb={7} mt={10}>
         <Text fontSize="2xl" fontWeight="bold" textAlign="center" mt={2}>
           Admin Panel
         </Text>
       </Box>
-      
+
       {DataItem.map((item) => (
         <Text
           key={item.key}
