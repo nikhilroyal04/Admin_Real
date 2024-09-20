@@ -37,7 +37,7 @@ export const { toggleItem } = menuSlice.actions;
 export const selectMenuItems = state => state.menu.items;
 
 // Selector to get the Dashboard item specifically
-export const selectDashboard = state => state.menu.items.find(item => item.key === 'Dashboard');
+export const selectdashboard = state => state.menu.items.find(item => item.key === 'Dashboard');
 export const selectroles = state => state.menu.items.find(item => item.key === 'Roles');
 export const selectuserList = state => state.menu.items.find(item => item.key === 'UserList');
 export const selectproperties = state => state.menu.items.find(item => item.key === 'Properties');

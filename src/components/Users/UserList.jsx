@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
+// Correct import in UserList.js
 import {
   fetchuserData,
   selectuserData,
   selectuserError,
   selectuserLoading,
-} from "../../app/Slices/menuSlice";
+} from "../../app/Slices/menuSlice"; // Ensure this path is correct
+
 import { useSelector, useDispatch } from "react-redux";
 import Loader from "../Not_Found/Loader";
 import Error502 from "../Not_Found/Error502";

@@ -5,7 +5,6 @@ import menuReducer from '../Slices/menuSlice';
 const store = configureStore({
   reducer: {
     users: menuReducer,
-    name: 'Users'
   },
 });
 
