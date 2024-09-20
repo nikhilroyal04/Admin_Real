@@ -8,12 +8,12 @@ import { MdContactPhone } from 'react-icons/md';
 
 const initialState = {
   items: [
-    { name: 'Dashboard', icon: <MdDashboard size={20} />, key: 'Dashboard', active: true },
-    { name: 'Roles', icon: <FaCriticalRole size={20} />, key: 'Roles', active: true },
-    { name: 'Users', icon: <FaUsersLine size={20} />, key: 'UserList', active: true },
-    { name: 'Properties', icon: <LuTableProperties size={20} />, key: 'Properties', active: true },
-    { name: 'Leads', icon: <SiGoogleadsense size={20} />, key: 'Leads', active: true },
-    { name: 'Contact', icon: <MdContactPhone size={20} />, key: 'Contact', active: true },
+    { name: 'Dashboard', icon: MdDashboard , key: 'Dashboard', active: true },
+    { name: 'Roles', icon: FaCriticalRole , key: 'Roles', active: true },
+    { name: 'Users', icon: FaUsersLine , key: 'UserList', active: true },
+    { name: 'Properties', icon: LuTableProperties , key: 'Properties', active: true },
+    { name: 'Leads', icon: SiGoogleadsense , key: 'Leads', active: true },
+    { name: 'Contact', icon: MdContactPhone  , key: 'Contact', active: true },
   ],
 };
 
@@ -33,16 +33,18 @@ const menuSlice = createSlice({
 // Exporting the toggle action
 export const { toggleItem } = menuSlice.actions;
 
-// Selector to get the entire menu items
-export const selectMenuItems = state => state.menu.items;
+// src/features/menuSlice.js (or wherever your selectors are defined)
 
-// Selector to get the Dashboard item specifically
-export const selectdashboard = state => state.menu.items.find(item => item.key === 'Dashboard');
-export const selectroles = state => state.menu.items.find(item => item.key === 'Roles');
-export const selectuserList = state => state.menu.items.find(item => item.key === 'UserList');
-export const selectproperties = state => state.menu.items.find(item => item.key === 'Properties');
-export const selectleads = state => state.menu.items.find(item => item.key === 'Leadss');
-export const selectcontact = state => state.menu.items.find(item => item.key === 'Contact');
+export const selectMenuItems = state => {
+  const items = state.menu.items;
+  return {
+    roles: items.find(item => item.key === 'Roles'),
+    userList: items.find(item => item.key === 'UserList'),
+    properties: items.find(item => item.key === 'Properties'),
+    leads: items.find(item => item.key === 'Leads'),
+    contact: items.find(item => item.key === 'Contact'),
+  };
+};
 
 
 export default menuSlice.reducer;

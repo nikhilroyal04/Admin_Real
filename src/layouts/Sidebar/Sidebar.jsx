@@ -1,15 +1,21 @@
 import { Box, Text, CloseButton } from "@chakra-ui/react";
 import { useState } from "react";
-import DataItem from "../ArrayData/DataItem"; // Ensure this path is correct
+import { useSelector, useDispatch } from "react-redux";
+import { selectMenuItems, toggleItem } from "../../app/Slices/menuSlice";
+
 
 const Sidebar = ({ isOpen, onClose }) => {
   const [activeItem, setActiveItem] = useState("Dashboard");
 
+  // Select active menu items from the Redux store
+  const menuItems = useSelector(selectMenuItems);
+  const dispatch = useDispatch(); // Initialize dispatch
+
   // Function to handle item click
-  const handleItemClick = (item) => {
-    setActiveItem(item);
+  const handleItemClick = (itemKey) => {
+    setActiveItem(itemKey);
+    dispatch(toggleItem(itemKey)); // Dispatch toggle action
     onClose(); // Close sidebar when an item is clicked
-    // Handle navigation or other actions here
   };
 
   return (
@@ -21,13 +27,12 @@ const Sidebar = ({ isOpen, onClose }) => {
       height="100vh"
       bg="black"
       color="white"
-      display={isOpen ? "block" : { base: "none", md: "block" }} // Show on mobile if open
+      display={isOpen ? "block" : { base: "none", md: "block" }}
       zIndex="1000"
     >
-      {/* Close Button Positioned in the Top-Right Corner */}
       <CloseButton
         position="absolute"
-        display={{base: "flex", md: "none"}}
+        display={{ base: "flex", md: "none" }}
         top="10px"
         right="10px"
         fontSize={15}
@@ -40,16 +45,16 @@ const Sidebar = ({ isOpen, onClose }) => {
         </Text>
       </Box>
 
-      {DataItem.map((item) => (
+      {menuItems.map(item => (
         <Text
           key={item.key}
           mb={6}
           mt={6}
           pl={10}
-          fontWeight={activeItem === item.name ? "bold" : "normal"}
-          color={activeItem === item.name ? "blue.400" : "white"}
+          fontWeight={activeItem === item.key ? "bold" : "normal"}
+          color={activeItem === item.key ? "blue.400" : "white"}
           cursor="pointer"
-          onClick={() => handleItemClick(item.name)}
+          onClick={() => handleItemClick(item.key)}
           display="flex"
           alignItems="center"
           _hover={{ color: "blue.300" }} // Hover effect

@@ -1,55 +1,27 @@
-import React, { useEffect } from "react";
-// Correct import in UserList.js
-import {
-  fetchuserData,
-  selectuserData,
-  selectuserError,
-  selectuserLoading,
-} from "../../app/Slices/menuSlice"; // Ensure this path is correct
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserData, selectUserData, selectLoading, selectError } from '../../app/Slices/menuSlice';
 
-import { useSelector, useDispatch } from "react-redux";
-import Loader from "../Not_Found/Loader";
-import Error502 from "../Not_Found/Error502";
-import { Text } from "@chakra-ui/react";
-import consoleManager from "../../utils/consoleManager";
-
-export default function UserList() {
+const UserList = () => {
   const dispatch = useDispatch();
-  const userData = useSelector(selectuserData);
-  const isLoading = useSelector(selectuserLoading);
-  const error = useSelector(selectuserError);
+  const userData = useSelector(selectUserData);
+  const loading = useSelector(selectLoading);
+  const error = useSelector(selectError);
 
   useEffect(() => {
-    dispatch(fetchuserData());
+    dispatch(fetchUserData());
   }, [dispatch]);
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (error) {
-    return <Error502 />;
-  }
-
-  if (userData.length === 0) {
-    consoleManager.log("No user data found");
-  }
-
-  consoleManager.log("User data:", userData);
-  consoleManager.error("User error:", error);
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <Text
-      fontSize="2xl"
-      fontWeight="bold"
-      textAlign="center"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      height="60vh"
-      color="blue.500"
-    >
-      {userData}
-    </Text>
+    <div>
+      {userData && userData.map(user => (
+        <div key={user.id}>{user.name}</div>
+      ))}
+    </div>
   );
-}
+};
+
+export default UserList;
