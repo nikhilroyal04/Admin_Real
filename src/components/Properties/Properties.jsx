@@ -3,7 +3,7 @@ import React from 'react'
 function Properties() {
   return (
     <div>
-       <h1>{Properties} Properties</h1>
+       <h1> Properties</h1>
     </div>
   )
 }

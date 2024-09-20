@@ -8,7 +8,7 @@ const FullLayout = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box>
+    <>
       <Header onOpen={onOpen} />
       <Sidebar isOpen={isOpen} onClose={onClose} />
       <Box
@@ -24,7 +24,7 @@ const FullLayout = () => {
         <Outlet />
       </Box>
      <Footer />
-    </Box>
+    </>
   );
 };
 
