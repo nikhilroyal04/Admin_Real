@@ -4,7 +4,6 @@ import FullLayout from "../layouts/FullLayouts";
 import Dashboard from "../components/Dashboard/Dashboard";
 import Roles from "../components/Roles/Roles";
 import Users from "../components/Users/UserList";
-import Auth from "../components/Auth/Auth";
 import Properties from "../components/Properties/Properties";
 import Leads from '../components/Leads/Leads'
 import Contact from '../components/Contact/Contact'
@@ -24,7 +23,6 @@ const Routing = () => {
           <Route index element={<Dashboard />} />
           <Route path="/roles" element={<Roles/>} />
           <Route path="/users" element={<Users/>} />
-          <Route path="/auth" element={<Auth/>} />
           <Route path="/properties" element={<Properties/>} />
           <Route path="/leads" element={<Leads/>} />
           <Route path="/contact" element={<Contact/>} />

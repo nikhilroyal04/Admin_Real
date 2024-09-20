@@ -4,14 +4,14 @@ import {
   selectuserData,
   selectuserError,
   selectuserLoading,
-} from "../../app/Slices/userSlice";
+} from "../../app/Slices/menuSlice";
 import { useSelector, useDispatch } from "react-redux";
 import Loader from "../Not_Found/Loader";
 import Error502 from "../Not_Found/Error502";
 import { Text } from "@chakra-ui/react";
 import consoleManager from "../../utils/consoleManager";
 
-export default function User_List() {
+export default function UserList() {
   const dispatch = useDispatch();
   const userData = useSelector(selectuserData);
   const isLoading = useSelector(selectuserLoading);
