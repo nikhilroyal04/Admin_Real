@@ -12,8 +12,7 @@ export default function Dashboard() {
       <SimpleGrid
         columns={{ base: 1, md: 2, lg: 4 }}
         spacing={4}
-        mt={14}
-        p={2} // Adding padding to the SimpleGrid
+        // Adding padding to the SimpleGrid
       >
         {/* ******************************* Row - 1 *************************************** */}
         {/* ******************************* card-1 *************************************** */}
@@ -71,7 +70,7 @@ export default function Dashboard() {
       </SimpleGrid>
 
       {/* ******************************* Row - 2 *************************************** */}
-      <Box p={4}>
+    <Box p={2}>
     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} >
       <Card borderRadius="md" boxShadow="sm" p={4} bg="#262626" w="full">
         <CardBody>
@@ -87,7 +86,7 @@ export default function Dashboard() {
   </Box>
 
        {/* ******************************* Row - 3 *************************************** */}
-       <Box p={4}>
+       <Box p={2}>
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
           <Card borderRadius="md" boxShadow="sm" p={4} bg="#262626">
             <CardBody>

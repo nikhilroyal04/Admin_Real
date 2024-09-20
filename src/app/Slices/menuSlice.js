@@ -36,15 +36,17 @@ export const { toggleItem } = menuSlice.actions;
 // src/features/menuSlice.js (or wherever your selectors are defined)
 
 export const selectMenuItems = state => {
-  const items = state.menu.items;
+  const items = state.menu?.items || []; // Use optional chaining and fallback to an empty array
   return {
-    roles: items.find(item => item.key === 'Roles'),
-    userList: items.find(item => item.key === 'UserList'),
-    properties: items.find(item => item.key === 'Properties'),
-    leads: items.find(item => item.key === 'Leads'),
-    contact: items.find(item => item.key === 'Contact'),
+    dashboard: items.find(item => item.key === 'Dashboard') || {},
+    roles: items.find(item => item.key === 'Roles') || {},
+    userList: items.find(item => item.key === 'UserList') || {},
+    properties: items.find(item => item.key === 'Properties') || {},
+    leads: items.find(item => item.key === 'Leads') || {},
+    contact: items.find(item => item.key === 'Contact') || {},
   };
 };
+
 
 
 export default menuSlice.reducer;

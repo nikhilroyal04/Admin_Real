@@ -4,12 +4,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectMenuItems, toggleItem } from "../../app/Slices/menuSlice";
 
 
+
+
 const Sidebar = ({ isOpen, onClose }) => {
   const [activeItem, setActiveItem] = useState("Dashboard");
 
   // Select active menu items from the Redux store
   const menuItems = useSelector(selectMenuItems);
-  const dispatch = useDispatch(); // Initialize dispatch
+  const dispatch = useDispatch();
 
   // Function to handle item click
   const handleItemClick = (itemKey) => {
@@ -17,6 +19,9 @@ const Sidebar = ({ isOpen, onClose }) => {
     dispatch(toggleItem(itemKey)); // Dispatch toggle action
     onClose(); // Close sidebar when an item is clicked
   };
+
+  // Convert the menuItems object to an array
+  const menuArray = Object.values(menuItems);
 
   return (
     <Box
@@ -45,7 +50,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         </Text>
       </Box>
 
-      {menuItems.map(item => (
+      {menuArray.map(item => (
         <Text
           key={item.key}
           mb={6}
@@ -68,3 +73,5 @@ const Sidebar = ({ isOpen, onClose }) => {
 };
 
 export default Sidebar;
+
+

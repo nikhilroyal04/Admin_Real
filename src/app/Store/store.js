@@ -1,10 +1,9 @@
-// src/app/store.js
 import { configureStore } from '@reduxjs/toolkit';
-//import menuReducer from '../Slices/menuSlice';
+import menuReducer from '../../app/Slices/menuSlice'; // Adjust the path accordingly
 
 const store = configureStore({
   reducer: {
-    users: menuReducer,
+    menu: menuReducer,
   },
 });
 
