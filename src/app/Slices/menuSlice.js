@@ -1,52 +1,76 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { MdDashboard } from 'react-icons/md';
-import { FaCriticalRole } from 'react-icons/fa';
-import { FaUsersLine } from 'react-icons/fa6';
-import { LuTableProperties } from 'react-icons/lu';
-import { SiGoogleadsense } from 'react-icons/si';
-import { MdContactPhone } from 'react-icons/md';
+import { createSlice } from "@reduxjs/toolkit";
+import { RiDashboardLine } from "react-icons/ri";
+import { FaUsers } from "react-icons/fa";
+import { SlControlEnd } from "react-icons/sl";
+import { FaBuilding } from "react-icons/fa";
+import { SiGoogleadsense } from "react-icons/si";
+import { MdContactPhone } from "react-icons/md";
+import { BiLogOut } from "react-icons/bi";
 
-const initialState = {
-  items: [
-    { name: 'Dashboard', icon: MdDashboard , key: 'Dashboard', active: true },
-    { name: 'Roles', icon: FaCriticalRole , key: 'Roles', active: true },
-    { name: 'Users', icon: FaUsersLine , key: 'UserList', active: true },
-    { name: 'Properties', icon: LuTableProperties , key: 'Properties', active: true },
-    { name: 'Leads', icon: SiGoogleadsense , key: 'Leads', active: true },
-    { name: 'Contact', icon: MdContactPhone  , key: 'Contact', active: true },
-  ],
+const getIconComponentByName = (name) => {
+  switch (name) {
+    case "Roles":
+      return SlControlEnd;
+    case "Users":
+      return FaUsers;
+    case "Properties":
+      return FaBuilding;
+    case "Leads":
+      return SiGoogleadsense;
+    case "Contact":
+      return MdContactPhone;
+    default:
+      return null;
+  }
 };
 
-const menuSlice = createSlice({
-  name: 'menu',
+const initialState = {
+  LinkItems: [],
+};
+
+export const menuSlice = createSlice({
+  name: "menu",
   initialState,
   reducers: {
-    toggleItem: (state, action) => {
-      const item = state.items.find(i => i.key === action.payload);
-      if (item) {
-        item.active = !item.active;
-      }
+    setLinkItems: (state, action) => {
+      state.LinkItems = action.payload || [];
     },
   },
 });
 
-// Exporting the toggle action
-export const { toggleItem } = menuSlice.actions;
+export const { setLinkItems } = menuSlice.actions;
 
-// src/features/menuSlice.js (or wherever your selectors are defined)
+export const fetchLinkItems = () => async (dispatch) => {
+  try {
+    const menuItems = [
+      { module: "Roles", pageRoute: "/roles" },
+      { module: "Users", pageRoute: "/users" },
+      { module: "Properties", pageRoute: "/properties" },
+      { module: "Leads", pageRoute: "/leads" },
+      { module: "Contact", pageRoute: "/contact" },
+    ].map((item) => ({
+      title: item.module,
+      href: item.pageRoute,
+      icon: getIconComponentByName(item.module),
+    }));
 
-export const selectMenuItems = state => {
-  const items = state.menu?.items || []; // Use optional chaining and fallback to an empty array
-  return {
-    dashboard: items.find(item => item.key === 'Dashboard') || {},
-    roles: items.find(item => item.key === 'Roles') || {},
-    userList: items.find(item => item.key === 'UserList') || {},
-    properties: items.find(item => item.key === 'Properties') || {},
-    leads: items.find(item => item.key === 'Leads') || {},
-    contact: items.find(item => item.key === 'Contact') || {},
-  };
+    // Adding fixed dashboard and signout items
+    const dashboardItem = {
+      title: "Dashboard",
+      href: "/dashboard",
+      icon: RiDashboardLine,
+    };
+
+    const signOutItem = {
+      title: "Signout",
+      href: "/logout",
+      icon: BiLogOut,
+    };
+
+    dispatch(setLinkItems([dashboardItem, ...menuItems, signOutItem]));
+  } catch (error) {
+    console.error("Error fetching menu items:", error);
+  }
 };
-
-
 
 export default menuSlice.reducer;

@@ -1,27 +1,24 @@
+import React, { useEffect, useState } from "react";
 import { Box, Text, CloseButton } from "@chakra-ui/react";
-import { useState } from "react";
+import { Link } from "react-router-dom"; 
 import { useSelector, useDispatch } from "react-redux";
-import { selectMenuItems, toggleItem } from "../../app/Slices/menuSlice";
-
-
-
+import { fetchLinkItems } from "../../app/Slices/menuSlice";
 
 const Sidebar = ({ isOpen, onClose }) => {
   const [activeItem, setActiveItem] = useState("Dashboard");
 
-  // Select active menu items from the Redux store
-  const menuItems = useSelector(selectMenuItems);
   const dispatch = useDispatch();
 
-  // Function to handle item click
-  const handleItemClick = (itemKey) => {
-    setActiveItem(itemKey);
-    dispatch(toggleItem(itemKey)); // Dispatch toggle action
-    onClose(); // Close sidebar when an item is clicked
+  useEffect(() => {
+    dispatch(fetchLinkItems());
+  }, [dispatch]);
+
+  const handleItemClick = (title) => {
+    setActiveItem(title);
+    onClose();
   };
 
-  // Convert the menuItems object to an array
-  const menuArray = Object.values(menuItems);
+  const menuItems = useSelector((state) => state.menu.LinkItems);
 
   return (
     <Box
@@ -35,6 +32,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       display={isOpen ? "block" : { base: "none", md: "block" }}
       zIndex="1000"
     >
+      {/* Close button on mobile */}
       <CloseButton
         position="absolute"
         display={{ base: "flex", md: "none" }}
@@ -50,28 +48,26 @@ const Sidebar = ({ isOpen, onClose }) => {
         </Text>
       </Box>
 
-      {menuArray.map(item => (
-        <Text
-          key={item.key}
-          mb={6}
-          mt={6}
-          pl={10}
-          fontWeight={activeItem === item.key ? "bold" : "normal"}
-          color={activeItem === item.key ? "blue.400" : "white"}
-          cursor="pointer"
-          onClick={() => handleItemClick(item.key)}
-          display="flex"
-          alignItems="center"
-          _hover={{ color: "blue.300" }} // Hover effect
-        >
-          {item.icon}
-          <span style={{ marginLeft: 8 }}>{item.name}</span>
-        </Text>
+      {/* Map over menu items from Redux store */}
+      {menuItems.map((item, index) => (
+        <Link to={item.href} key={index} style={{ textDecoration: "none" }}>
+          <Text
+            mb={6}
+            mt={6}
+            pl={10}
+            cursor="pointer"
+            display="flex"
+            alignItems="center"
+            _hover={{ color: "blue.300" }}
+            onClick={() => handleItemClick(item.title)}
+          >
+            <Box as={item.icon} fontSize="20px" mr={4} />
+            <span>{item.title}</span> 
+          </Text>
+        </Link>
       ))}
     </Box>
   );
 };
 
 export default Sidebar;
-
-
