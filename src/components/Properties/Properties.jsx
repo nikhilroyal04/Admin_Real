@@ -17,6 +17,7 @@ import {
   Button,
   Flex,
   Text,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 
@@ -65,7 +66,7 @@ const MyTable = () => {
 
   return (
     <ChakraProvider>
-      <Box overflowX="auto">
+      <Box overflowX="auto" borderRadius="md" overflow="hidden">
         <Flex alignItems="center" justifyContent="space-between" mb={4}>
           <Heading as="h4">Members</Heading>
           <InputGroup width="300px">
@@ -81,7 +82,7 @@ const MyTable = () => {
           </InputGroup>
         </Flex>
         <Box>
-          <Table variant="striped" colorScheme="gray" borderWidth="1px" borderColor="gray.300">
+          <Table variant="striped" colorScheme="gray" borderWidth="1px" size="xl">
             <Thead>
               <Tr>
                 <Th>Id</Th>
