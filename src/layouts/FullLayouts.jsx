@@ -13,7 +13,7 @@ const FullLayout = () => {
       <Sidebar isOpen={isOpen} onClose={onClose} />
       <Box
         ml={{ base: 0, md: "250px" }}
-        pt="150px"
+        pt="140px"
         pl={8}
         pr={8}
         // pb="60px"

@@ -1,4 +1,6 @@
+// src/MyTable.js
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   ChakraProvider,
   Table,
@@ -13,33 +15,32 @@ import {
   InputLeftElement,
   Input,
   Box,
-  Avatar,
   Button,
   Flex,
+  TableContainer,
   Text,
-  useBreakpointValue,
+  Avatar,
+  Select,
+  List,
+  ListItem,
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
+import { selectProperties } from '../../app/Slices/PropSlice'; // Adjust the import path as needed
 
 const MyTable = () => {
+  const [filter, setFilter] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 2; // Number of items per page
+  const pageSize = 5; // Number of items per page
 
-  const data = [
-    { id: 1, name: 'Alice', status: 'Active', email: 'alice@example.com', role: 'Admin', avatar: 'https://bit.ly/broken-link' },
-    { id: 2, name: 'Bob', status: 'Active', email: 'bob@example.com', role: 'User', avatar: 'https://bit.ly/broken-link' },
-    { id: 3, name: 'Charlie', status: 'Active', email: 'charlie@example.com', role: 'User', avatar: 'https://bit.ly/broken-link' },
-    { id: 4, name: 'David', status: 'Active', email: 'david@example.com', role: 'User', avatar: 'https://bit.ly/broken-link' },
-    { id: 5, name: 'Eve', status: 'Active', email: 'eve@example.com', role: 'Admin', avatar: 'https://bit.ly/broken-link' },
-    { id: 6, name: 'Frank', status: 'Active', email: 'frank@example.com', role: 'User', avatar: 'https://bit.ly/broken-link' },
-    { id: 7, name: 'Grace', status: 'Active', email: 'grace@example.com', role: 'User', avatar: 'https://bit.ly/broken-link' },
-    { id: 8, name: 'Heidi', status: 'Active', email: 'heidi@example.com', role: 'User', avatar: 'https://bit.ly/broken-link' },
-  ];
+  const data = useSelector(selectProperties); // Get data from Redux store
 
-  const filteredData = data.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter data based on search term and selected filter
+  const filteredData = data.filter(item => {
+    const matchesSearchTerm = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filter === '' || item.category === filter; // Assuming `item.category` exists
+    return matchesSearchTerm && matchesFilter;
+  });
 
   const totalPages = Math.ceil(filteredData.length / pageSize);
   const paginatedData = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -66,10 +67,16 @@ const MyTable = () => {
 
   return (
     <ChakraProvider>
-      <Box overflowX="auto" borderRadius="md" overflow="hidden">
-        <Flex alignItems="center" justifyContent="space-between" mb={4}>
-          <Heading as="h4">Members</Heading>
-          <InputGroup width="300px">
+      <Box 
+        overflowX="auto" 
+        borderRadius="30px" 
+        borderWidth={1}
+        borderColor="gray.300"
+        p={4}
+      >
+        <Flex alignItems="center" justifyContent="space-between" mb={10} mt={4}>
+          <Heading fontSize='30px' ml='10px'>Members</Heading>
+          <InputGroup width="250px" ml='440px'>
             <InputLeftElement pointerEvents="none">
               <SearchIcon color="gray.300" />
             </InputLeftElement>
@@ -80,68 +87,62 @@ const MyTable = () => {
               borderRadius={40}
             />
           </InputGroup>
+      {/* New Filter Dropdown */}
+         <Box mr='25px'>
+          <Select placeholder="Active" onChange={(e) => setFilter(e.target.value)}>
+            <option value="fruit">Fruits</option>
+            <option value="vegetable">Vegetables</option>
+            <option value="dairy">Dairy</option>
+          </Select>
+        </Box>
         </Flex>
-        <Box>
-          <Table variant="striped" colorScheme="gray" borderWidth="1px" size="xl">
+        <TableContainer>
+          <Table size='sm'>
             <Thead>
               <Tr>
                 <Th>Id</Th>
                 <Th>Name</Th>
+                <Th>Assigned To:</Th>
+                <Th>Mobile No</Th>
                 <Th>Status</Th>
-                <Th>Email</Th>
-                <Th>Role</Th>
+                <Th>Wallet</Th>
                 <Th>Action</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {paginatedData.length > 0 ? (
-                paginatedData.map(item => (
-                  <Tr key={item.id}>
-                    <Td>{item.id}</Td>
-                    <Td>
-                      <Avatar size="sm" name={item.name} src={item.avatar} mr={2} />
+              {paginatedData.map(item => (
+                <Tr key={item.id}>
+                  <Td>{item.id}</Td>
+                  <Td>
+                    <Flex alignItems="center">
+                      <Avatar name={item.name} size="sm" mr={2} />
                       {item.name}
-                    </Td>
-                    <Td>{item.status}</Td>
-                    <Td>{item.email}</Td>
-                    <Td>{item.role}</Td>
-                    <Td>
-                      <Button colorScheme="blue" size="sm" onClick={() => handleEdit(item.id)} mr={2}>
-                        Edit
-                      </Button>
-                      <Button colorScheme="red" size="sm" onClick={() => handleDelete(item.id)}>
-                        Delete
-                      </Button>
-                    </Td>
-                  </Tr>
-                ))
-              ) : (
-                <Tr>
-                  <Td colSpan={6} textAlign="center">No results found</Td>
+                    </Flex>
+                  </Td>
+                  <Td>{item.assignedto}</Td>
+                  <Td>{item.mobileno}</Td>
+                  <Td>{item.status}</Td>
+                  <Td>{item.wallet}</Td>
+                  <Td>
+                    <Button onClick={() => handleEdit(item.id)} colorScheme="blue" size="sm" mr={2}>Edit</Button>
+                    <Button onClick={() => handleDelete(item.id)} colorScheme="red" size="sm">Delete</Button>
+                  </Td>
                 </Tr>
-              )}
+              ))}
             </Tbody>
             <Tfoot>
               <Tr>
-                <Td colSpan={5}>
-                  <Text color="#8b8b8b" display="inline">
-                    Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, filteredData.length)} of {filteredData.length} results
-                  </Text>
-                </Td>
-                <Td>
-                  <Flex justify="flex-end" mt={2}>
-                    <Button onClick={handlePrevious} isDisabled={currentPage === 1} mr={2}>
-                      Previous
-                    </Button>
-                    <Button onClick={handleNext} isDisabled={currentPage === totalPages}>
-                      Next
-                    </Button>
+                <Th colSpan={7}>
+                  <Flex justifyContent="space-between">
+                    <Button onClick={handlePrevious} isDisabled={currentPage === 1}>Previous</Button>
+                    <Text mt={5}>Page {currentPage} of {totalPages}</Text>
+                    <Button onClick={handleNext} isDisabled={currentPage === totalPages}>Next</Button>
                   </Flex>
-                </Td>
+                </Th>
               </Tr>
             </Tfoot>
           </Table>
-        </Box>
+        </TableContainer>
       </Box>
     </ChakraProvider>
   );
