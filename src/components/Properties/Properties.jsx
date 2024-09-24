@@ -27,57 +27,74 @@ import {
   selectTotalPages,
   selectpropertyLoading,
   selectpropertyError,
-} from "../../app/Slices/propertiesSlice"; // Adjust the import path as needed
+} from "../../app/Slices/propertiesSlice";
 
 const MyTable = () => {
   const dispatch = useDispatch();
-  const [filters, setFilter] = useState("");
+  const [location, setLocation] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [searchTerm, setSearchTerm] = useState("");
   const propertyData = useSelector(selectpropertyData);
   const propertyError = useSelector(selectpropertyError);
   const propertyLoading = useSelector(selectpropertyLoading);
   const totalPages = useSelector(selectTotalPages);
 
   useEffect(() => {
-    // Fetch data with current filters and page
-    dispatch(
-      fetchAllpropertyData(
-        currentPage,
-        "",
-        filters.location,
-        filters.subLocation,
-        filters.propertyFor,
-        filters.propertyType,
-        filters.propertySubtype
-      )
-    );
-  }, [dispatch, filters, currentPage]);
+    dispatch(fetchAllpropertyData(currentPage, searchTerm, location));
+  }, [dispatch, currentPage, searchTerm, location]);
 
-
-  const handleEdit = (id) => {
-    console.log("Edit property with id:", id);
+  const handleEdit = (propertyno) => {
+    console.log("Edit property with property number:", propertyno);
   };
 
-  const handleDelete = (id) => {
-    console.log("Delete property with id:", id);
+  const handleDelete = (propertyno) => {
+    console.log("Delete property with property number:", propertyno);
+  };
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
+  const renderPageButtons = () => {
+    const buttons = [];
+    for (let i = 1; i <= totalPages; i++) {
+      buttons.push(
+        <Button
+          key={i}
+          onClick={() => handlePageClick(i)}
+          colorScheme={i === currentPage ? "blue" : "gray"}
+          size="sm"
+          mr={2}
+          mt={-8}
+        >
+          {i}
+        </Button>
+      );
+    }
+    return buttons;
   };
 
   return (
     <ChakraProvider>
       <Box
-        overflowX="auto"
+        overflowX={{ base: "scroll", md: "auto" }}
         borderRadius="30px"
         borderWidth={1}
         borderColor="gray.300"
-        p={4}
+        p={6}
       >
-        <Flex alignItems="center" justifyContent="space-between" mb={10} mt={4}>
-          <Heading fontSize="30px" ml="10px">
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          alignItems="center"
+          justifyContent="space-between"
+          mb={10}
+          mt={4}
+        >
+          <Heading fontSize={{ base: "24px", md: "30px" }} ml="10px">
             Properties
           </Heading>
-          <InputGroup width="250px">
+          <InputGroup width={{ base: "100%", md: "220px" }} mt={{ base: 4, md: 0 }} ml={{ md: "450px" }}>
             <InputLeftElement pointerEvents="none">
               <SearchIcon color="gray.300" />
             </InputLeftElement>
@@ -88,22 +105,29 @@ const MyTable = () => {
               borderRadius={40}
             />
           </InputGroup>
-          {/* Updated Filter Dropdown */}
-          <Box mr="25px">
+          <Box mr={{ base: 0, md: "25px" }} mt={{ base: 4, md: 0 }}>
             <Select
-              placeholder="Select Status"
-              onChange={(e) => setFilter(e.target.value)}
+              placeholder="Status"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
             >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="Location1">Active</option>
+              <option value="Location2">Inactive</option>
             </Select>
           </Box>
         </Flex>
+
+        {propertyError && (
+          <Text color="red.500" mb={4}>
+            {propertyError}
+          </Text>
+        )}
+
         <TableContainer>
-          <Table size="sm">
+          <Table size="md">
             <Thead>
               <Tr>
-                <Th>Id</Th>
+                <Th>Property NO</Th>
                 <Th>Name</Th>
                 <Th>Assigned To</Th>
                 <Th>Mobile No</Th>
@@ -113,55 +137,70 @@ const MyTable = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {propertyData.map((item) => (
-                <Tr key={item.id}>
-                  <Td>{item.id}</Td>
-                  <Td>
-                    <Flex alignItems="center">
-                      <Avatar name={item.name} size="sm" mr={2} />
-                      {item.name}
-                    </Flex>
-                  </Td>
-                  <Td>{item.assignedTo}</Td> {/* Corrected casing */}
-                  <Td>{item.mobileNo}</Td> {/* Corrected casing */}
-                  <Td>{item.status}</Td>
-                  <Td>{item.wallet}</Td>
-                  <Td>
-                    <Button
-                      onClick={() => handleEdit(item.id)}
-                      colorScheme="blue"
-                      size="sm"
-                      mr={2}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      onClick={() => handleDelete(item.id)}
-                      colorScheme="red"
-                      size="sm"
-                    >
-                      Delete
-                    </Button>
+              {propertyLoading ? (
+                <Tr>
+                  <Td colSpan={7} textAlign="center">
+                    Loading...
                   </Td>
                 </Tr>
-              ))}
+              ) : propertyData.length > 0 ? (
+                propertyData.map((item) => (
+                  <Tr key={item.propertyno}>
+                    <Td>{item.propertyno}</Td>
+                    <Td>
+                      <Flex alignItems="center">
+                        <Avatar name={item.name} size="sm" mr={2} />
+                        {item.name}
+                      </Flex>
+                    </Td>
+                    <Td>{item.assignedTo}</Td>
+                    <Td>{item.mobileNo}</Td>
+                    <Td>{item.status}</Td>
+                    <Td>{item.wallet}</Td>
+                    <Td>
+                      <Button
+                        onClick={() => handleEdit(item.propertyno)}
+                        size="sm"
+                        mr={2}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        onClick={() => handleDelete(item.propertyno)}
+                        size="sm"
+                      >
+                        Delete
+                      </Button>
+                    </Td>
+                  </Tr>
+                ))
+              ) : (
+                <Tr>
+                  <Td colSpan={7} textAlign="center">
+                    No properties found.
+                  </Td>
+                </Tr>
+              )}
             </Tbody>
           </Table>
         </TableContainer>
-        <Flex justifyContent="space-between" mt={4}>
+        
+        <Flex justifyContent="space-between" mt={6}>
           <Button
-            onClick={() => dispatch(previousPage())}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             isDisabled={currentPage === 1}
           >
             Previous
           </Button>
-          <Text>{`Page ${currentPage} of ${totalPages}`}</Text>
           <Button
-            onClick={() => dispatch(nextPage())}
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             isDisabled={currentPage === totalPages}
           >
             Next
           </Button>
+        </Flex>
+       <Flex justifyContent="center" >
+          {renderPageButtons()}
         </Flex>
       </Box>
     </ChakraProvider>

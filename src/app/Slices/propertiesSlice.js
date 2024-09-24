@@ -9,7 +9,7 @@ const propertySlice = createSlice({
     error: null,
     currentPage: 1,  
     totalPages: 1,  
-    propertyById: null, 
+    propertyByProperyNo: null, 
   },
   reducers: {
     setpropertyData: (state, action) => {
@@ -27,19 +27,19 @@ const propertySlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     },
-    setPropertyById: (state, action) => {
-      state.propertyById = action.payload;
+    setPropertyByProperyNo: (state, action) => {
+      state.propertyByProperyNo = action.payload;
       state.isLoading = false;
       state.error = null;
     },
-    setPropertyByIdError: (state, action) => {
+    setPropertyByProperyNoError: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
   },
 });
 
-export const { setpropertyData, setpropertyLoading, setpropertyError, setPropertyById, setPropertyByIdError } = propertySlice.actions;
+export const { setpropertyData, setpropertyLoading, setpropertyError, setPropertyByProperyNo, setPropertyByProperyNoError } = propertySlice.actions;
 
 export const fetchAllpropertyData = (page = 1, searchQuery = '', location = '', subLocation = '', propertyFor = '', propertyType = '', propertySubtype='') => async (dispatch) => {
   dispatch(setpropertyLoading());
@@ -50,7 +50,7 @@ export const fetchAllpropertyData = (page = 1, searchQuery = '', location = '', 
       {
         params: {
           page,
-          limit: 20,
+          limit: 10,
           propertyNo: searchQuery,
           location,
           subLocation,
@@ -91,15 +91,15 @@ export const AddpropertyData = (formData) => async (dispatch) => {
   }
 };
 
-export const fetchPropertyById = (id) => async (dispatch) => {
+export const fetchPropertyByProperyNo = (PropertyNo) => async (dispatch) => {
   dispatch(setpropertyLoading());
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}property/getProperty/${id}`
+      `${import.meta.env.VITE_BASE_URL}property/getProperty/${propertyno}`
     );
-    dispatch(setPropertyById(response.data.data));
+    dispatch(setPropertyByProperyNo(response.data.data));
   } catch (error) {
-    dispatch(setPropertyByIdError(error.message));
+    dispatch(setPropertyByProperyNoError(error.message));
   }
 };
 
@@ -108,7 +108,7 @@ export const selectpropertyLoading = (state) => state.property.isLoading;
 export const selectpropertyError = (state) => state.property.error;
 export const selectTotalPages = (state) => state.property.totalPages;  
 export const selectCurrentPage = (state) => state.property.currentPage;  
-export const selectPropertyById = (state) => state.property.propertyById;
+export const selectPropertyByProperyNo = (state) => state.property.propertyByProperyNo;
 
 
 export default propertySlice.reducer;
