@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import menuReducer from '../../app/Slices/menuSlice'; 
-import propertiesReducer from '../Slices/PropSlice';
+import propertyReducer from '../Slices/propertiesSlice';
 
 
 const store = configureStore({
   reducer: {
     menu: menuReducer,
-    properties: propertiesReducer,
+    property: propertyReducer,
   },
 });
 
