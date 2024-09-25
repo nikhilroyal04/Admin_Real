@@ -87,7 +87,7 @@ const MyTable = () => {
   return (
     <ChakraProvider>
       <Box
-        overflowX={{ base: "scroll", md: "auto" }}
+        overflowX="auto"
         borderRadius="30px"
         borderWidth={1}
         borderColor="gray.300"
@@ -164,10 +164,10 @@ const MyTable = () => {
                       </Flex>
                     </Td>
                     <Td>{item.propertyType}</Td>
-                    <Td>{item.propertysubType}</Td>
+                    <Td>{item.propertySubtype}</Td>
                     <Td>{item.size}</Td>
                     <Td>{item.location}</Td>
-                    <Td>{item.sublocation}</Td>
+                    <Td>{item.subLocation}</Td>
                     <Td>
                       <Button
                         onClick={() => handleEdit(item.propertyNo)}
