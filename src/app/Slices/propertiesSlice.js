@@ -47,7 +47,7 @@ export const {
   setPropertyByProperyNoError,
 } = propertySlice.actions;
 
-export const fetchAllpropertyData = (page = 1, searchQuery = '', location = '', subLocation = '', propertyFor = '', propertyType = '', propertySubtype='') => async (dispatch) => {
+export const fetchAllpropertyData = (page = 1, searchQuery = '',propertyFor = '', propertyType = '',propertysubType='', size = '',location = '', subLocation = '') => async (dispatch) => {
   dispatch(setpropertyLoading());
 
   try {
@@ -58,12 +58,13 @@ export const fetchAllpropertyData = (page = 1, searchQuery = '', location = '', 
           page,
           limit: 20,
           propertyNo: searchQuery,
+          propertyFor,
+          propertyType ,
+          propertysubType,
+          size,
           location,
           subLocation,
-          propertyFor,
-          propertyType,
-          propertySubtype,
-        },
+         },
       }
     );
 

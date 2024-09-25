@@ -137,38 +137,40 @@ const MyTable = () => {
             <Thead>
               <Tr>
                 <Th>Property NO</Th>
-                <Th>Name</Th>
-                <Th>Assigned To</Th>
-                <Th>Mobile No</Th>
-                <Th>Status</Th>
-                <Th>Wallet</Th>
-                <Th>Action</Th>
+                <Th>Property For</Th>
+                <Th>Property Type</Th>
+                <Th>Property Subtype</Th>
+                <Th>Size</Th>
+                <Th>Location</Th>
+                <Th>Sublocation</Th>
+                <Th>Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
               {propertyLoading ? (
                 <Tr>
-                  <Td colSpan={7} textAlign="center">
+                  <Td colSpan={8} textAlign="center">
                     Loading...
                   </Td>
                 </Tr>
               ) : propertyData.length > 0 ? (
                 propertyData.map((item) => (
-                  <Tr key={item.propertyno}>
-                    <Td>{item.propertyno}</Td>
+                  <Tr key={item.propertyNo}>
+                    <Td>{item.propertyNo}</Td>
                     <Td>
                       <Flex alignItems="center">
-                        <Avatar name={item.name} size="sm" mr={2} />
-                        {item.name}
+                        <Avatar name={item.propertyFor} size="sm" mr={2} />
+                        {item.propertyFor}
                       </Flex>
                     </Td>
-                    <Td>{item.assignedTo}</Td>
-                    <Td>{item.mobileNo}</Td>
-                    <Td>{item.status}</Td>
-                    <Td>{item.wallet}</Td>
+                    <Td>{item.propertyType}</Td>
+                    <Td>{item.propertysubType}</Td>
+                    <Td>{item.size}</Td>
+                    <Td>{item.location}</Td>
+                    <Td>{item.sublocation}</Td>
                     <Td>
                       <Button
-                        onClick={() => handleEdit(item.propertyno)}
+                        onClick={() => handleEdit(item.propertyNo)}
                         size="sm"
                         mr={2}
                         variant="outline"
@@ -178,7 +180,7 @@ const MyTable = () => {
                       </Button>
                       <Button
                         onClick={() => {
-                          setPropertyToDelete(item.propertyno);
+                          setPropertyToDelete(item.propertyNo);
                           setIsDeleteOpen(true);
                         }}
                         size="sm"
@@ -192,7 +194,7 @@ const MyTable = () => {
                 ))
               ) : (
                 <Tr>
-                  <Td colSpan={7} textAlign="center">
+                  <Td colSpan={8} textAlign="center">
                     No properties found.
                   </Td>
                 </Tr>
@@ -253,11 +255,15 @@ const MyTable = () => {
               Are you sure you want to edit property number {propertyToEdit}?
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={() => {
-                console.log("Edit property with property number:", propertyToEdit);
-                setIsEditOpen(false);
-                // Place your edit logic here
-              }}>
+              <Button
+                colorScheme="blue"
+                mr={3}
+                onClick={() => {
+                  console.log("Edit property with property number:", propertyToEdit);
+                  setIsEditOpen(false);
+                  // Place your edit logic here
+                }}
+              >
                 Confirm
               </Button>
               <Button variant="outline" onClick={() => setIsEditOpen(false)}>
