@@ -7,13 +7,13 @@ const propertySlice = createSlice({
     data: [],
     isLoading: false,
     error: null,
-    currentPage: 1,  
-    totalPages: 1,  
-    propertyByProperyNo: null, 
+    currentPage: 1,
+    totalPages: 1,
+    propertyByProperyNo: null,
   },
   reducers: {
     setpropertyData: (state, action) => {
-      state.data = action.payload.properties;  
+      state.data = action.payload.properties;
       state.totalPages = action.payload.totalPages;
       state.currentPage = action.payload.currentPage;
       state.isLoading = false;
@@ -39,7 +39,13 @@ const propertySlice = createSlice({
   },
 });
 
-export const { setpropertyData, setpropertyLoading, setpropertyError, setPropertyByProperyNo, setPropertyByProperyNoError } = propertySlice.actions;
+export const {
+  setpropertyData,
+  setpropertyLoading,
+  setpropertyError,
+  setPropertyByProperyNo,
+  setPropertyByProperyNoError,
+} = propertySlice.actions;
 
 export const fetchAllpropertyData = (page = 1, searchQuery = '', location = '', subLocation = '', propertyFor = '', propertyType = '', propertySubtype='') => async (dispatch) => {
   dispatch(setpropertyLoading());
@@ -50,7 +56,7 @@ export const fetchAllpropertyData = (page = 1, searchQuery = '', location = '', 
       {
         params: {
           page,
-          limit: 10,
+          limit: 20,
           propertyNo: searchQuery,
           location,
           subLocation,
@@ -61,19 +67,19 @@ export const fetchAllpropertyData = (page = 1, searchQuery = '', location = '', 
       }
     );
 
-    const { properties, totalPages } = response.data.data; 
+    const { properties, totalPages } = response.data.data;
 
     dispatch(setpropertyData({
-      properties,   
-      totalPages,   
-      currentPage: page,  
+      properties,
+      totalPages,
+      currentPage: page,
     }));
   } catch (error) {
     dispatch(setpropertyError(error.message));
   }
 };
 
-export const AddpropertyData = (formData) => async (dispatch) => {
+export const addPropertyData = (formData) => async (dispatch) => {
   try {
     await axios.post(
       import.meta.env.VITE_BASE_URL + "property/addProperty",
@@ -85,17 +91,51 @@ export const AddpropertyData = (formData) => async (dispatch) => {
       }
     );
 
-    dispatch(fetchAllpropertyData()); 
+    dispatch(fetchAllpropertyData());
   } catch (error) {
     console.error("Error:", error);
   }
 };
 
-export const fetchPropertyByProperyNo = (PropertyNo) => async (dispatch) => {
+// New edit property action
+export const editPropertyData = (propertyNo, formData) => async (dispatch) => {
+  dispatch(setpropertyLoading());
+  try {
+    await axios.put(
+      `${import.meta.env.VITE_BASE_URL}property/editProperty/${propertyNo}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    dispatch(fetchAllpropertyData()); // Refresh property list
+  } catch (error) {
+    dispatch(setpropertyError(error.message));
+  }
+};
+
+// New delete property action
+export const deleteProperty = (propertyNo) => async (dispatch) => {
+  dispatch(setpropertyLoading());
+  try {
+    await axios.delete(
+      `${import.meta.env.VITE_BASE_URL}property/deleteProperty/${propertyNo}`
+    );
+
+    dispatch(fetchAllpropertyData()); // Refresh property list
+  } catch (error) {
+    dispatch(setpropertyError(error.message));
+  }
+};
+
+export const fetchPropertyByProperyNo = (propertyNo) => async (dispatch) => {
   dispatch(setpropertyLoading());
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}property/getProperty/${propertyno}`
+      `${import.meta.env.VITE_BASE_URL}property/getProperty/${propertyNo}`
     );
     dispatch(setPropertyByProperyNo(response.data.data));
   } catch (error) {
@@ -106,9 +146,8 @@ export const fetchPropertyByProperyNo = (PropertyNo) => async (dispatch) => {
 export const selectpropertyData = (state) => state.property.data;
 export const selectpropertyLoading = (state) => state.property.isLoading;
 export const selectpropertyError = (state) => state.property.error;
-export const selectTotalPages = (state) => state.property.totalPages;  
-export const selectCurrentPage = (state) => state.property.currentPage;  
+export const selectTotalPages = (state) => state.property.totalPages;
+export const selectCurrentPage = (state) => state.property.currentPage;
 export const selectPropertyByProperyNo = (state) => state.property.propertyByProperyNo;
-
 
 export default propertySlice.reducer;

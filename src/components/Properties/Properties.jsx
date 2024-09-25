@@ -19,6 +19,12 @@ import {
   Avatar,
   Select,
   Text,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import {
@@ -34,6 +40,10 @@ const MyTable = () => {
   const [location, setLocation] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [propertyToDelete, setPropertyToDelete] = useState(null);
+  const [propertyToEdit, setPropertyToEdit] = useState(null);
 
   const propertyData = useSelector(selectpropertyData);
   const propertyError = useSelector(selectpropertyError);
@@ -45,11 +55,15 @@ const MyTable = () => {
   }, [dispatch, currentPage, searchTerm, location]);
 
   const handleEdit = (propertyno) => {
-    console.log("Edit property with property number:", propertyno);
+    setPropertyToEdit(propertyno);
+    setIsEditOpen(true);
   };
 
-  const handleDelete = (propertyno) => {
-    console.log("Delete property with property number:", propertyno);
+  const handleDelete = () => {
+    console.log("Delete property with property number:", propertyToDelete);
+    // Call your delete action here if needed
+    setIsDeleteOpen(false);
+    setPropertyToDelete(null);
   };
 
   const handlePageClick = (page) => {
@@ -57,22 +71,17 @@ const MyTable = () => {
   };
 
   const renderPageButtons = () => {
-    const buttons = [];
-    for (let i = 1; i <= totalPages; i++) {
-      buttons.push(
-        <Button
-          key={i}
-          onClick={() => handlePageClick(i)}
-          colorScheme={i === currentPage ? "blue" : "gray"}
-          size="sm"
-          mr={2}
-          mt={-8}
-        >
-          {i}
-        </Button>
-      );
-    }
-    return buttons;
+    return Array.from({ length: totalPages }, (_, index) => (
+      <Button
+        key={index + 1}
+        onClick={() => handlePageClick(index + 1)}
+        colorScheme={index + 1 === currentPage ? "blue" : "gray"}
+        size="sm"
+        mr={2}
+      >
+        {index + 1}
+      </Button>
+    ));
   };
 
   return (
@@ -162,12 +171,19 @@ const MyTable = () => {
                         onClick={() => handleEdit(item.propertyno)}
                         size="sm"
                         mr={2}
+                        variant="outline"
+                        isDisabled={propertyLoading}
                       >
                         Edit
                       </Button>
                       <Button
-                        onClick={() => handleDelete(item.propertyno)}
+                        onClick={() => {
+                          setPropertyToDelete(item.propertyno);
+                          setIsDeleteOpen(true);
+                        }}
                         size="sm"
+                        variant="outline"
+                        isDisabled={propertyLoading}
                       >
                         Delete
                       </Button>
@@ -184,24 +200,72 @@ const MyTable = () => {
             </Tbody>
           </Table>
         </TableContainer>
-        
-        <Flex justifyContent="space-between" mt={6}>
-          <Button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            isDisabled={currentPage === 1}
-          >
-            Previous
-          </Button>
-          <Button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            isDisabled={currentPage === totalPages}
-          >
-            Next
-          </Button>
-        </Flex>
-       <Flex justifyContent="center" >
+
+        <Flex justifyContent="flex-start" mt={6} mb={4}>
+          {currentPage > 1 && (
+            <Button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              isDisabled={propertyLoading}
+              mr={2}
+              variant="outline"
+            >
+              Previous
+            </Button>
+          )}
           {renderPageButtons()}
+          {currentPage < totalPages && (
+            <Button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              isDisabled={propertyLoading}
+              ml={2}
+              variant="outline"
+            >
+              Next
+            </Button>
+          )}
         </Flex>
+
+        {/* Confirmation Modal for Deleting */}
+        <Modal isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Confirm Delete</ModalHeader>
+            <ModalBody>
+              Are you sure you want to delete property number {propertyToDelete}?
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={handleDelete}>
+                Confirm
+              </Button>
+              <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* Confirmation Modal for Editing */}
+        <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Confirm Edit</ModalHeader>
+            <ModalBody>
+              Are you sure you want to edit property number {propertyToEdit}?
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={() => {
+                console.log("Edit property with property number:", propertyToEdit);
+                setIsEditOpen(false);
+                // Place your edit logic here
+              }}>
+                Confirm
+              </Button>
+              <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Box>
     </ChakraProvider>
   );
