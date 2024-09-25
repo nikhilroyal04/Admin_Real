@@ -9,7 +9,7 @@ const propertySlice = createSlice({
     error: null,
     currentPage: 1,
     totalPages: 1,
-    propertyByProperyNo: null,
+    propertyByPropertyNo: null,
   },
   reducers: {
     setpropertyData: (state, action) => {
@@ -27,12 +27,12 @@ const propertySlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     },
-    setPropertyByProperyNo: (state, action) => {
-      state.propertyByProperyNo = action.payload;
+    setPropertyByPropertyNo: (state, action) => {
+      state.propertyByPropertyNo = action.payload;
       state.isLoading = false;
       state.error = null;
     },
-    setPropertyByProperyNoError: (state, action) => {
+    setPropertyByPropertyNoError: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
@@ -43,8 +43,8 @@ export const {
   setpropertyData,
   setpropertyLoading,
   setpropertyError,
-  setPropertyByProperyNo,
-  setPropertyByProperyNoError,
+  setPropertyByPropertyNo,
+  setPropertyByPropertyNoError,
 } = propertySlice.actions;
 
 export const fetchAllpropertyData = (page = 1, searchQuery = '',propertyFor = '', propertyType = '',propertySubtype ='', size = '',location = '', subLocation = '') => async (dispatch) => {
@@ -81,10 +81,11 @@ export const fetchAllpropertyData = (page = 1, searchQuery = '',propertyFor = ''
 };
 
 export const addPropertyData = (formData) => async (dispatch) => {
+  dispatch(setpropertyLoading());
   try {
     await axios.post(
-      import.meta.env.VITE_BASE_URL + "property/addProperty",
-      formData,
+      `${import.meta.env.VITE_BASE_URL}property/addProperty/${formData}`,
+       formData,
       {
         headers: {
           "Content-Type": "application/json",
@@ -99,11 +100,11 @@ export const addPropertyData = (formData) => async (dispatch) => {
 };
 
 // New edit property action
-export const editPropertyData = (propertyNo, formData) => async (dispatch) => {
+export const editPropertyData = (id, formData) => async (dispatch) => {
   dispatch(setpropertyLoading());
   try {
     await axios.put(
-      `${import.meta.env.VITE_BASE_URL}property/editProperty/${propertyNo}`,
+      `${import.meta.env.VITE_BASE_URL}property/removeProperty${id}`,
       formData,
       {
         headers: {
@@ -119,11 +120,11 @@ export const editPropertyData = (propertyNo, formData) => async (dispatch) => {
 };
 
 // New delete property action
-export const deleteProperty = (propertyNo) => async (dispatch) => {
+export const deleteProperty = (id) => async (dispatch) => {
   dispatch(setpropertyLoading());
   try {
     await axios.delete(
-      `${import.meta.env.VITE_BASE_URL}property/deleteProperty/${propertyNo}`
+      `${import.meta.env.VITE_BASE_URL}property/removeProperty/${id}`
     );
 
     dispatch(fetchAllpropertyData()); // Refresh property list
@@ -132,15 +133,15 @@ export const deleteProperty = (propertyNo) => async (dispatch) => {
   }
 };
 
-export const fetchPropertyByProperyNo = (propertyNo) => async (dispatch) => {
+export const fetchPropertyByPropertyNo = (propertyNo) => async (dispatch) => {
   dispatch(setpropertyLoading());
   try {
     const response = await axios.get(
       `${import.meta.env.VITE_BASE_URL}property/getProperty/${propertyNo}`
     );
-    dispatch(setPropertyByProperyNo(response.data.data));
+    dispatch(setPropertyByPropertyNo(response.data.data));
   } catch (error) {
-    dispatch(setPropertyByProperyNoError(error.message));
+    dispatch(setPropertyByPropertyNoError(error.message));
   }
 };
 
@@ -149,6 +150,6 @@ export const selectpropertyLoading = (state) => state.property.isLoading;
 export const selectpropertyError = (state) => state.property.error;
 export const selectTotalPages = (state) => state.property.totalPages;
 export const selectCurrentPage = (state) => state.property.currentPage;
-export const selectPropertyByProperyNo = (state) => state.property.propertyByProperyNo;
+export const selectPropertyByPropertyNo = (state) => state.property.propertyByPropertyNo;
 
 export default propertySlice.reducer;

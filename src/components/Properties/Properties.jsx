@@ -176,7 +176,7 @@ const MyTable = () => {
                         variant="outline"
                         isDisabled={propertyLoading}
                       >
-                        Edit
+                        View
                       </Button>
                       <Button
                         onClick={() => {
@@ -203,7 +203,7 @@ const MyTable = () => {
           </Table>
         </TableContainer>
 
-        <Flex justifyContent="flex-start" mt={6} mb={4}>
+        <Flex justifyContent="center" mt={6} mb={4}>
           {currentPage > 1 && (
             <Button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -256,7 +256,7 @@ const MyTable = () => {
             </ModalBody>
             <ModalFooter>
               <Button
-                colorScheme="blue"
+                bg="#4f4f4f"
                 mr={3}
                 onClick={() => {
                   console.log("Edit property with property number:", propertyToEdit);
@@ -266,7 +266,7 @@ const MyTable = () => {
               >
                 Confirm
               </Button>
-              <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              <Button  bg="#4f4f4f" onClick={() => setIsEditOpen(false)}>
                 Cancel
               </Button>
             </ModalFooter>
