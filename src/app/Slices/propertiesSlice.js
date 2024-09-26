@@ -120,11 +120,11 @@ export const editPropertyData = (id, formData) => async (dispatch) => {
 };
 
 // New delete property action
-export const deleteProperty = (id) => async (dispatch) => {
+export const deleteProperty = (formData) => async (dispatch) => {
   dispatch(setpropertyLoading());
   try {
     await axios.delete(
-      `${import.meta.env.VITE_BASE_URL}property/removeProperty/${id}`
+      `${import.meta.env.VITE_BASE_URL}property/removeProperty${formData}`
     );
 
     dispatch(fetchAllpropertyData()); // Refresh property list

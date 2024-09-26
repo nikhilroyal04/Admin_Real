@@ -33,6 +33,7 @@ import {
   selectTotalPages,
   selectpropertyLoading,
   selectpropertyError,
+  editPropertyData,
 } from "../../app/Slices/propertiesSlice";
 
 const MyTable = () => {
@@ -42,8 +43,18 @@ const MyTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isEditConfirmOpen, setIsEditConfirmOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState(null);
   const [propertyToEdit, setPropertyToEdit] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    propertyNo: "",
+    propertyFor: "",
+    propertyType: "",
+    propertySubtype: "",
+    size: "",
+    location: "",
+    subLocation: "",
+  });
 
   const propertyData = useSelector(selectpropertyData);
   const propertyError = useSelector(selectpropertyError);
@@ -54,9 +65,19 @@ const MyTable = () => {
     dispatch(fetchAllpropertyData(currentPage, searchTerm, location));
   }, [dispatch, currentPage, searchTerm, location]);
 
-  const handleEdit = (propertyno) => {
-    setPropertyToEdit(propertyno);
-    setIsEditOpen(true);
+  const handleEdit = (property) => {
+    setEditFormData(property); // Set the selected property data for editing
+    setIsEditOpen(true); // Open the edit modal
+  };
+
+  const handleEditSubmit = () => {
+    setIsEditConfirmOpen(true); // Open the confirmation modal when saving
+  };
+
+  const handleEditConfirm = () => {
+    dispatch(editPropertyData(editFormData)); // Dispatch your edit action
+    setIsEditOpen(false);
+    setIsEditConfirmOpen(false);
   };
 
   const handleDelete = () => {
@@ -170,13 +191,13 @@ const MyTable = () => {
                     <Td>{item.subLocation}</Td>
                     <Td>
                       <Button
-                        onClick={() => handleEdit(item.propertyNo)}
+                        onClick={() => handleEdit(item)}
                         size="sm"
                         mr={2}
                         variant="outline"
                         isDisabled={propertyLoading}
                       >
-                        View
+                      View
                       </Button>
                       <Button
                         onClick={() => {
@@ -247,26 +268,72 @@ const MyTable = () => {
         </Modal>
 
         {/* Confirmation Modal for Editing */}
-        <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)}>
+        <Modal isOpen={isEditConfirmOpen} onClose={() => setIsEditConfirmOpen(false)}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Confirm Edit</ModalHeader>
             <ModalBody>
-              Are you sure you want to edit property number {propertyToEdit}?
+              Are you sure you want to save changes to property number {editFormData.propertyNo}?
             </ModalBody>
             <ModalFooter>
-              <Button
-                bg="#4f4f4f"
-                mr={3}
-                onClick={() => {
-                  console.log("Edit property with property number:", propertyToEdit);
-                  setIsEditOpen(false);
-                  // Place your edit logic here
-                }}
-              >
+              <Button colorScheme="blue" mr={3} onClick={handleEditConfirm}>
                 Confirm
               </Button>
-              <Button  bg="#4f4f4f" onClick={() => setIsEditOpen(false)}>
+              <Button variant="outline" onClick={() => setIsEditConfirmOpen(false)}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* Edit Modal */}
+        <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Edit Property</ModalHeader>
+            <ModalBody>
+              <Input
+                placeholder="Property For"
+                value={editFormData.propertyFor}
+                onChange={(e) => setEditFormData({ ...editFormData, propertyFor: e.target.value })}
+                mb={4}
+              />
+              <Input
+                placeholder="Property Type"
+                value={editFormData.propertyType}
+                onChange={(e) => setEditFormData({ ...editFormData, propertyType: e.target.value })}
+                mb={4}
+              />
+              <Input
+                placeholder="Property Subtype"
+                value={editFormData.propertySubtype}
+                onChange={(e) => setEditFormData({ ...editFormData, propertySubtype: e.target.value })}
+                mb={4}
+              />
+              <Input
+                placeholder="Size"
+                value={editFormData.size}
+                onChange={(e) => setEditFormData({ ...editFormData, size: e.target.value })}
+                mb={4}
+              />
+              <Input
+                placeholder="Location"
+                value={editFormData.location}
+                onChange={(e) => setEditFormData({ ...editFormData, location: e.target.value })}
+                mb={4}
+              />
+              <Input
+                placeholder="Sublocation"
+                value={editFormData.subLocation}
+                onChange={(e) => setEditFormData({ ...editFormData, subLocation: e.target.value })}
+                mb={4}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={handleEditSubmit}>
+                Save Changes
+              </Button>
+              <Button variant="outline" onClick={() => setIsEditOpen(false)}>
                 Cancel
               </Button>
             </ModalFooter>
