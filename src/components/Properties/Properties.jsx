@@ -16,7 +16,6 @@ import {
   Button,
   Flex,
   TableContainer,
-  Avatar,
   Select,
   Text,
   Modal,
@@ -28,12 +27,14 @@ import {
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import {
-  fetchAllpropertyData,
-  selectpropertyData,
+  fetchAllPropertyData,
+  selectPropertyData,
   selectTotalPages,
-  selectpropertyLoading,
-  selectpropertyError,
+  selectPropertyLoading,
+  selectPropertyError,
   editPropertyData,
+  deleteProperty,
+  togglePropertyStatus, // Import the toggle action
 } from "../../app/Slices/propertiesSlice";
 
 const MyTable = () => {
@@ -45,7 +46,6 @@ const MyTable = () => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isEditConfirmOpen, setIsEditConfirmOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState(null);
-  const [propertyToEdit, setPropertyToEdit] = useState(null);
   const [editFormData, setEditFormData] = useState({
     propertyNo: "",
     propertyFor: "",
@@ -56,35 +56,45 @@ const MyTable = () => {
     subLocation: "",
   });
 
-  const propertyData = useSelector(selectpropertyData);
-  const propertyError = useSelector(selectpropertyError);
-  const propertyLoading = useSelector(selectpropertyLoading);
+  const propertyData = useSelector(selectPropertyData);
+  const propertyError = useSelector(selectPropertyError);
+  const propertyLoading = useSelector(selectPropertyLoading);
   const totalPages = useSelector(selectTotalPages);
 
   useEffect(() => {
-    dispatch(fetchAllpropertyData(currentPage, searchTerm, location));
+    dispatch(fetchAllPropertyData(currentPage, searchTerm, location));
   }, [dispatch, currentPage, searchTerm, location]);
 
   const handleEdit = (property) => {
-    setEditFormData(property); // Set the selected property data for editing
-    setIsEditOpen(true); // Open the edit modal
+    setEditFormData(property);
+    setIsEditOpen(true);
   };
 
   const handleEditSubmit = () => {
-    setIsEditConfirmOpen(true); // Open the confirmation modal when saving
+    setIsEditConfirmOpen(true);
   };
 
   const handleEditConfirm = () => {
-    dispatch(editPropertyData(editFormData)); // Dispatch your edit action
+    dispatch(editPropertyData(editFormData.propertyNo, editFormData));
     setIsEditOpen(false);
     setIsEditConfirmOpen(false);
   };
 
   const handleDelete = () => {
-    console.log("Delete property with property number:", propertyToDelete);
-    // Call your delete action here if needed
+    if (propertyToDelete) {
+      dispatch(deleteProperty(propertyToDelete));
+    }
     setIsDeleteOpen(false);
     setPropertyToDelete(null);
+  };
+
+  const handleToggleStatus = (propertyNo, currentStatus) => {
+    const newStatus = currentStatus === "Active"
+      ? "Inactive"
+      : currentStatus === "Inactive"
+      ? "Pending"
+      : "Active"; // Cycle through the statuses
+    dispatch(togglePropertyStatus(newStatus, propertyNo));
   };
 
   const handlePageClick = (page) => {
@@ -141,8 +151,9 @@ const MyTable = () => {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
             >
-              <option value="Location1">Active</option>
-              <option value="Location2">Inactive</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Pending">Pending</option>
             </Select>
           </Box>
         </Flex>
@@ -164,13 +175,14 @@ const MyTable = () => {
                 <Th>Size</Th>
                 <Th>Location</Th>
                 <Th>Sublocation</Th>
+                <Th>Status</Th>
                 <Th>Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
               {propertyLoading ? (
                 <Tr>
-                  <Td colSpan={8} textAlign="center">
+                  <Td colSpan={9} textAlign="center">
                     Loading...
                   </Td>
                 </Tr>
@@ -178,17 +190,26 @@ const MyTable = () => {
                 propertyData.map((item) => (
                   <Tr key={item.propertyNo}>
                     <Td>{item.propertyNo}</Td>
-                    <Td>
-                      <Flex alignItems="center">
-                        <Avatar name={item.propertyFor} size="sm" mr={2} />
-                        {item.propertyFor}
-                      </Flex>
-                    </Td>
+                    <Td>{item.propertyFor}</Td>
                     <Td>{item.propertyType}</Td>
                     <Td>{item.propertySubtype}</Td>
                     <Td>{item.size}</Td>
                     <Td>{item.location}</Td>
                     <Td>{item.subLocation}</Td>
+                    <Td>
+                      <Button
+                        onClick={() => handleToggleStatus(item.propertyNo, item.status)}
+                        size="sm"
+                        colorScheme={
+                          item.status === "Active" ? "green" :
+                          item.status === "Inactive" ? "red" :
+                          "yellow"
+                        }
+                        variant="outline"
+                      >
+                        {item.status}
+                      </Button>
+                    </Td>
                     <Td>
                       <Button
                         onClick={() => handleEdit(item)}
@@ -197,7 +218,7 @@ const MyTable = () => {
                         variant="outline"
                         isDisabled={propertyLoading}
                       >
-                      View
+                        Edit
                       </Button>
                       <Button
                         onClick={() => {
@@ -215,7 +236,7 @@ const MyTable = () => {
                 ))
               ) : (
                 <Tr>
-                  <Td colSpan={8} textAlign="center">
+                  <Td colSpan={9} textAlign="center">
                     No properties found.
                   </Td>
                 </Tr>
@@ -326,12 +347,11 @@ const MyTable = () => {
                 placeholder="Sublocation"
                 value={editFormData.subLocation}
                 onChange={(e) => setEditFormData({ ...editFormData, subLocation: e.target.value })}
-                mb={4}
               />
             </ModalBody>
             <ModalFooter>
               <Button colorScheme="blue" mr={3} onClick={handleEditSubmit}>
-                Save Changes
+                Save
               </Button>
               <Button variant="outline" onClick={() => setIsEditOpen(false)}>
                 Cancel

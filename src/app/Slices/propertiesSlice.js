@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const propertySlice = createSlice({
@@ -10,20 +10,21 @@ const propertySlice = createSlice({
     currentPage: 1,
     totalPages: 1,
     propertyByPropertyNo: null,
+    propertyStatus: null, // Added property status data
   },
   reducers: {
-    setpropertyData: (state, action) => {
+    setPropertyData: (state, action) => {
       state.data = action.payload.properties;
       state.totalPages = action.payload.totalPages;
       state.currentPage = action.payload.currentPage;
       state.isLoading = false;
       state.error = null;
     },
-    setpropertyLoading: (state) => {
+    setPropertyLoading: (state) => {
       state.isLoading = true;
       state.error = null;
     },
-    setpropertyError: (state, action) => {
+    setPropertyError: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
@@ -36,19 +37,54 @@ const propertySlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     },
+    setPropertyStatus: (state, action) => {
+      state.propertyStatus = action.payload; // Update property status
+      state.isLoading = false;
+      state.error = null;
+    },
+    clearPropertyStatus: (state) => {
+      state.propertyStatus = null; // Clear property status
+    },
   },
 });
 
+// Action creators
 export const {
-  setpropertyData,
-  setpropertyLoading,
-  setpropertyError,
+  setPropertyData,
+  setPropertyLoading,
+  setPropertyError,
   setPropertyByPropertyNo,
   setPropertyByPropertyNoError,
+  setPropertyStatus,
+  clearPropertyStatus,
 } = propertySlice.actions;
 
-export const fetchAllpropertyData = (page = 1, searchQuery = '',propertyFor = '', propertyType = '',propertySubtype ='', size = '',location = '', subLocation = '') => async (dispatch) => {
-  dispatch(setpropertyLoading());
+// Async thunk to toggle property status
+export const togglePropertyStatus = (status, propertyNo) => async (dispatch) => {
+  dispatch(setPropertyLoading());
+  try {
+    const requestBody = { status }; // Prepare the request body
+
+    await axios.put(
+      `http://localhost:3310/v1/property/removeProperty/${propertyNo}`, 
+      requestBody,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    dispatch(fetchAllPropertyData()); // Fetch updated property data
+    dispatch(setPropertyStatus(status)); // Update property status in the store
+  } catch (error) {
+    dispatch(setPropertyError(error.message)); // Handle any errors
+  }
+};
+
+// Async thunk to fetch all property data
+export const fetchAllPropertyData = (page = 1, searchQuery = '', propertyFor = '', propertyType = '', propertySubtype = '', size = '', subLocation = '') => async (dispatch) => {
+  dispatch(setPropertyLoading());
 
   try {
     const response = await axios.get(
@@ -59,52 +95,33 @@ export const fetchAllpropertyData = (page = 1, searchQuery = '',propertyFor = ''
           limit: 20,
           propertyNo: searchQuery,
           propertyFor,
-          propertyType ,
+          propertyType,
           propertySubtype,
           size,
-          location,
+          location: searchQuery,
           subLocation,
-         },
+        },
       }
     );
 
     const { properties, totalPages } = response.data.data;
 
-    dispatch(setpropertyData({
+    dispatch(setPropertyData({
       properties,
       totalPages,
       currentPage: page,
     }));
   } catch (error) {
-    dispatch(setpropertyError(error.message));
+    dispatch(setPropertyError(error.message));
   }
 };
 
+// Async thunk to add a property
 export const addPropertyData = (formData) => async (dispatch) => {
-  dispatch(setpropertyLoading());
+  dispatch(setPropertyLoading());
   try {
     await axios.post(
-      `${import.meta.env.VITE_BASE_URL}property/addProperty/${formData}`,
-       formData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    dispatch(fetchAllpropertyData());
-  } catch (error) {
-    console.error("Error:", error);
-  }
-};
-
-// New edit property action
-export const editPropertyData = (id, formData) => async (dispatch) => {
-  dispatch(setpropertyLoading());
-  try {
-    await axios.put(
-      `${import.meta.env.VITE_BASE_URL}property/removeProperty${id}`,
+      `${import.meta.env.VITE_BASE_URL}property/addProperty`,
       formData,
       {
         headers: {
@@ -113,28 +130,50 @@ export const editPropertyData = (id, formData) => async (dispatch) => {
       }
     );
 
-    dispatch(fetchAllpropertyData()); // Refresh property list
+    dispatch(fetchAllPropertyData());
   } catch (error) {
-    dispatch(setpropertyError(error.message));
+    dispatch(setPropertyError(error.message));
   }
 };
 
-// New delete property action
-export const deleteProperty = (formData) => async (dispatch) => {
-  dispatch(setpropertyLoading());
+// Async thunk to edit a property
+export const editPropertyData = (id, formData) => async (dispatch) => {
+  dispatch(setPropertyLoading());
   try {
-    await axios.delete(
-      `${import.meta.env.VITE_BASE_URL}property/removeProperty${formData}`
+    await axios.put(
+      `${import.meta.env.VITE_BASE_URL}property/editProperty/${id}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
 
-    dispatch(fetchAllpropertyData()); // Refresh property list
+    dispatch(fetchAllPropertyData());
   } catch (error) {
-    dispatch(setpropertyError(error.message));
+    dispatch(setPropertyError(error.message));
   }
 };
 
+// Async thunk to delete a property
+export const deleteProperty = (propertyNo) => async (dispatch) => {
+  dispatch(setPropertyLoading());
+
+  try {
+    await axios.delete(
+      `${import.meta.env.VITE_BASE_URL}property/removeProperty/${propertyNo}`
+    );
+
+    dispatch(fetchAllPropertyData());
+  } catch (error) {
+    dispatch(setPropertyError(error.message));
+  }
+};
+
+// Async thunk to fetch property by property number
 export const fetchPropertyByPropertyNo = (propertyNo) => async (dispatch) => {
-  dispatch(setpropertyLoading());
+  dispatch(setPropertyLoading());
   try {
     const response = await axios.get(
       `${import.meta.env.VITE_BASE_URL}property/getProperty/${propertyNo}`
@@ -145,11 +184,13 @@ export const fetchPropertyByPropertyNo = (propertyNo) => async (dispatch) => {
   }
 };
 
-export const selectpropertyData = (state) => state.property.data;
-export const selectpropertyLoading = (state) => state.property.isLoading;
-export const selectpropertyError = (state) => state.property.error;
+// Selectors
+export const selectPropertyData = (state) => state.property.data;
+export const selectPropertyLoading = (state) => state.property.isLoading;
+export const selectPropertyError = (state) => state.property.error;
 export const selectTotalPages = (state) => state.property.totalPages;
 export const selectCurrentPage = (state) => state.property.currentPage;
 export const selectPropertyByPropertyNo = (state) => state.property.propertyByPropertyNo;
+export const selectPropertyStatus = (state) => state.property.propertyStatus; // Selector for property status
 
 export default propertySlice.reducer;
