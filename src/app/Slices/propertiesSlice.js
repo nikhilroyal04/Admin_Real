@@ -121,7 +121,7 @@ export const addPropertyData = (formData) => async (dispatch) => {
   dispatch(setPropertyLoading());
   try {
     await axios.post(
-      `${import.meta.env.VITE_BASE_URL}property/addProperty`,
+      `${import.meta.env.VITE_BASE_URL}/property/addProperty`,
       formData,
       {
         headers: {
@@ -137,11 +137,11 @@ export const addPropertyData = (formData) => async (dispatch) => {
 };
 
 // Async thunk to edit a property
-export const editPropertyData = (id, formData) => async (dispatch) => {
+export const editPropertyData = (id,formData) => async (dispatch) => {
   dispatch(setPropertyLoading());
   try {
     await axios.put(
-      `${import.meta.env.VITE_BASE_URL}property/editProperty/${id}`,
+      `${import.meta.env.VITE_BASE_URL}property/updateProperty${id}`,
       formData,
       {
         headers: {
@@ -157,19 +157,29 @@ export const editPropertyData = (id, formData) => async (dispatch) => {
 };
 
 // Async thunk to delete a property
-export const deleteProperty = (propertyNo) => async (dispatch) => {
+// Adjust the import path as necessary
+
+export const deleteProperty = (id) => async (dispatch) => {
   dispatch(setPropertyLoading());
 
   try {
     await axios.delete(
-      `${import.meta.env.VITE_BASE_URL}property/removeProperty/${propertyNo}`
+      `${import.meta.env.VITE_BASE_URL}/property/removeProperty/${id}`
     );
 
+    // Fetch updated property data after deletion
     dispatch(fetchAllPropertyData());
+    
+    // Optionally return a success message or the deleted ID
+    return id; 
   } catch (error) {
     dispatch(setPropertyError(error.message));
+    
+    // Optionally throw the error for handling in the component
+    throw new Error(error.message);
   }
 };
+
 
 // Async thunk to fetch property by property number
 export const fetchPropertyByPropertyNo = (propertyNo) => async (dispatch) => {

@@ -34,7 +34,7 @@ import {
   selectPropertyError,
   editPropertyData,
   deleteProperty,
-  togglePropertyStatus, // Import the toggle action
+  togglePropertyStatus,
 } from "../../app/Slices/propertiesSlice";
 
 const MyTable = () => {
@@ -75,25 +75,35 @@ const MyTable = () => {
   };
 
   const handleEditConfirm = () => {
-    dispatch(editPropertyData(editFormData.propertyNo, editFormData));
+    dispatch(editPropertyData(editFormData.id, editFormData));
     setIsEditOpen(false);
     setIsEditConfirmOpen(false);
   };
 
+  // Inside your MyTable component...
+
   const handleDelete = () => {
     if (propertyToDelete) {
-      dispatch(deleteProperty(propertyToDelete));
+      dispatch(deleteProperty(propertyToDelete))
+        .unwrap() // Use unwrap to handle fulfilled and rejected cases
+        .then(() => {
+          console.log("Property deleted successfully");
+        })
+        .catch((error) => {
+          console.error("Failed to delete property:", error);
+        });
     }
     setIsDeleteOpen(false);
     setPropertyToDelete(null);
   };
 
+
   const handleToggleStatus = (propertyNo, currentStatus) => {
     const newStatus = currentStatus === "Active"
       ? "Inactive"
       : currentStatus === "Inactive"
-      ? "Pending"
-      : "Active"; // Cycle through the statuses
+        ? "Pending"
+        : "Active"; // Cycle through the statuses
     dispatch(togglePropertyStatus(newStatus, propertyNo));
   };
 
@@ -203,8 +213,8 @@ const MyTable = () => {
                         size="sm"
                         colorScheme={
                           item.status === "Active" ? "green" :
-                          item.status === "Inactive" ? "red" :
-                          "yellow"
+                            item.status === "Inactive" ? "red" :
+                              "yellow"
                         }
                         variant="outline"
                       >
@@ -223,7 +233,7 @@ const MyTable = () => {
                       </Button>
                       <Button
                         onClick={() => {
-                          setPropertyToDelete(item.propertyNo);
+                          setPropertyToDelete(item.id);
                           setIsDeleteOpen(true);
                         }}
                         size="sm"
@@ -271,6 +281,7 @@ const MyTable = () => {
         </Flex>
 
         {/* Confirmation Modal for Deleting */}
+        // Modal for deletion remains the same...
         <Modal isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
           <ModalOverlay />
           <ModalContent>
@@ -288,6 +299,7 @@ const MyTable = () => {
             </ModalFooter>
           </ModalContent>
         </Modal>
+
 
         {/* Confirmation Modal for Editing */}
         <Modal isOpen={isEditConfirmOpen} onClose={() => setIsEditConfirmOpen(false)}>
