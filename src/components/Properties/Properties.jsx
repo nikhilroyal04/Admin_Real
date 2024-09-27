@@ -281,7 +281,7 @@ const MyTable = () => {
         </Flex>
 
         {/* Confirmation Modal for Deleting */}
-        // Modal for deletion remains the same...
+      
         <Modal isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
           <ModalOverlay />
           <ModalContent>
