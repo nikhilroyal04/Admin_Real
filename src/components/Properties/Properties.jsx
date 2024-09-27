@@ -139,6 +139,7 @@ const MyTable = () => {
               <SearchIcon color="gray.300" />
             </InputLeftElement>
             <Input
+              color="gray.300"
               placeholder="Search..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
