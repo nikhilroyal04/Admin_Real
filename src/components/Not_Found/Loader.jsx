@@ -9,16 +9,15 @@ const Loader = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        height: "50vh",
         width: "auto",
-        backgroundColor: "#fff",
       }}
     >
       <Lottie
         loop
         animationData={loaderAnimation}
         play
-        style={{ width: 400, height: "auto" }}
+        style={{ width: 300, height: "auto" }}
       />
     </div>
   );

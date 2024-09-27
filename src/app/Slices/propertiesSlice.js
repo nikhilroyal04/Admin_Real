@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const propertySlice = createSlice({
@@ -9,119 +9,76 @@ const propertySlice = createSlice({
     error: null,
     currentPage: 1,
     totalPages: 1,
-    propertyByPropertyNo: null,
-    propertyStatus: null, // Added property status data
+    propertyById: null,
   },
   reducers: {
-    setPropertyData: (state, action) => {
+    setpropertyData: (state, action) => {
       state.data = action.payload.properties;
       state.totalPages = action.payload.totalPages;
       state.currentPage = action.payload.currentPage;
       state.isLoading = false;
       state.error = null;
     },
-    setPropertyLoading: (state) => {
+    setpropertyLoading: (state) => {
       state.isLoading = true;
       state.error = null;
     },
-    setPropertyError: (state, action) => {
+    setpropertyError: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
-    setPropertyByPropertyNo: (state, action) => {
-      state.propertyByPropertyNo = action.payload;
+    setPropertyById: (state, action) => {
+      state.propertyById = action.payload;
       state.isLoading = false;
       state.error = null;
     },
-    setPropertyByPropertyNoError: (state, action) => {
+    setPropertyByIdError: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
-    },
-    setPropertyStatus: (state, action) => {
-      state.propertyStatus = action.payload; // Update property status
-      state.isLoading = false;
-      state.error = null;
-    },
-    clearPropertyStatus: (state) => {
-      state.propertyStatus = null; // Clear property status
     },
   },
 });
 
-// Action creators
 export const {
-  setPropertyData,
-  setPropertyLoading,
-  setPropertyError,
-  setPropertyByPropertyNo,
-  setPropertyByPropertyNoError,
-  setPropertyStatus,
-  clearPropertyStatus,
+  setpropertyData,
+  setpropertyLoading,
+  setpropertyError,
+  setPropertyById,
+  setPropertyByIdError,
 } = propertySlice.actions;
 
-// Async thunk to toggle property status
-export const togglePropertyStatus = (status, propertyNo) => async (dispatch) => {
-  dispatch(setPropertyLoading());
-  try {
-    const requestBody = { status }; // Prepare the request body
+export const fetchAllPropertyData =
+  (page = 1, searchQuery = "", location = "") =>
+  async (dispatch) => {
+    dispatch(setpropertyLoading());
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}property/getAllProperties`,
+        {
+          params: {
+            page,
+            propertyNo: searchQuery,
+            location,
+          },
+        }
+      );
+      const { properties, totalPages } = response.data.data;
+      dispatch(
+        setpropertyData({
+          properties,
+          totalPages,
+          currentPage: page,
+        })
+      );
+    } catch (error) {
+      dispatch(setpropertyError(error.message));
+    }
+  };
 
-    await axios.put(
-      `http://localhost:3310/v1/property/removeProperty/${propertyNo}`, 
-      requestBody,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    dispatch(fetchAllPropertyData()); // Fetch updated property data
-    dispatch(setPropertyStatus(status)); // Update property status in the store
-  } catch (error) {
-    dispatch(setPropertyError(error.message)); // Handle any errors
-  }
-};
-
-// Async thunk to fetch all property data
-export const fetchAllPropertyData = (page = 1, searchQuery = '', propertyFor = '', propertyType = '', propertySubtype = '', size = '', subLocation = '') => async (dispatch) => {
-  dispatch(setPropertyLoading());
-
-  try {
-    const response = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}property/getAllProperties`,
-      {
-        params: {
-          page,
-          limit: 20,
-          propertyNo: searchQuery,
-          propertyFor,
-          propertyType,
-          propertySubtype,
-          size,
-          location: searchQuery,
-          subLocation,
-        },
-      }
-    );
-
-    const { properties, totalPages } = response.data.data;
-
-    dispatch(setPropertyData({
-      properties,
-      totalPages,
-      currentPage: page,
-    }));
-  } catch (error) {
-    dispatch(setPropertyError(error.message));
-  }
-};
-
-// Async thunk to add a property
-export const addPropertyData = (formData) => async (dispatch) => {
-  dispatch(setPropertyLoading());
+export const AddPropertyData = (formData) => async (dispatch) => {
   try {
     await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/property/addProperty`,
+      import.meta.env.VITE_BASE_URL + "property/addProperty",
       formData,
       {
         headers: {
@@ -129,19 +86,17 @@ export const addPropertyData = (formData) => async (dispatch) => {
         },
       }
     );
-
     dispatch(fetchAllPropertyData());
   } catch (error) {
-    dispatch(setPropertyError(error.message));
+    dispatch(setpropertyError(error.message));
   }
 };
 
-// Async thunk to edit a property
-export const editPropertyData = (id,formData) => async (dispatch) => {
-  dispatch(setPropertyLoading());
+// Edit property action
+export const EditPropertyData = (id, formData) => async (dispatch) => {
   try {
     await axios.put(
-      `${import.meta.env.VITE_BASE_URL}property/updateProperty${id}`,
+      `${import.meta.env.VITE_BASE_URL}property/updateProperty/${id}`,
       formData,
       {
         headers: {
@@ -149,58 +104,42 @@ export const editPropertyData = (id,formData) => async (dispatch) => {
         },
       }
     );
-
     dispatch(fetchAllPropertyData());
   } catch (error) {
-    dispatch(setPropertyError(error.message));
+    dispatch(setpropertyError(error.message));
   }
 };
 
-// Async thunk to delete a property
-// Adjust the import path as necessary
-
-export const deleteProperty = (id) => async (dispatch) => {
-  dispatch(setPropertyLoading());
-
+// Delete property action
+export const DeletePropertyData = (id) => async (dispatch) => {
   try {
-    await axios.delete(
-      `${import.meta.env.VITE_BASE_URL}/property/removeProperty/${id}`
+    await axios.put(
+      `${import.meta.env.VITE_BASE_URL}property/removeProperty/${id}`
     );
-
-    // Fetch updated property data after deletion
     dispatch(fetchAllPropertyData());
-    
-    // Optionally return a success message or the deleted ID
-    return id; 
   } catch (error) {
-    dispatch(setPropertyError(error.message));
-    
-    // Optionally throw the error for handling in the component
-    throw new Error(error.message);
+    dispatch(setpropertyError(error.message));
   }
 };
 
-
-// Async thunk to fetch property by property number
-export const fetchPropertyByPropertyNo = (propertyNo) => async (dispatch) => {
-  dispatch(setPropertyLoading());
+export const fetchPropertyById = (id) => async (dispatch) => {
+  dispatch(setpropertyLoading());
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}property/getProperty/${propertyNo}`
+      `${import.meta.env.VITE_BASE_URL}property/getProperty/${id}`
     );
-    dispatch(setPropertyByPropertyNo(response.data.data));
+    dispatch(setPropertyById(response.data.data));
   } catch (error) {
-    dispatch(setPropertyByPropertyNoError(error.message));
+    dispatch(setPropertyByIdError(error.message));
   }
 };
 
 // Selectors
-export const selectPropertyData = (state) => state.property.data;
-export const selectPropertyLoading = (state) => state.property.isLoading;
-export const selectPropertyError = (state) => state.property.error;
+export const selectpropertyData = (state) => state.property.data;
+export const selectpropertyLoading = (state) => state.property.isLoading;
+export const selectpropertyError = (state) => state.property.error;
 export const selectTotalPages = (state) => state.property.totalPages;
 export const selectCurrentPage = (state) => state.property.currentPage;
-export const selectPropertyByPropertyNo = (state) => state.property.propertyByPropertyNo;
-export const selectPropertyStatus = (state) => state.property.propertyStatus; // Selector for property status
+export const selectPropertyById = (state) => state.property.propertyById;
 
 export default propertySlice.reducer;

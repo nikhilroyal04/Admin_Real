@@ -23,7 +23,9 @@ const FullLayout = () => {
       >
         <Outlet />
       </Box>
-     <Footer />
+      <Box height="80px" bg="#0d0c0d" />
+
+      <Footer />
     </>
   );
 };

@@ -11,14 +11,13 @@ const NoData = () => {
         alignItems: "center",
         height: "auto",
         width: "auto",
-        backgroundColor: "#fff", 
       }}
     >
       <Lottie
         loop
         animationData={loaderAnimation}
         play
-        style={{ width: 500, height: 500, }}
+        style={{ width: 300, height: 500, }}
       />
     </div>
   );

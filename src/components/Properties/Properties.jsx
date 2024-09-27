@@ -16,365 +16,423 @@ import {
   Button,
   Flex,
   TableContainer,
-  Select,
   Text,
+  useToast,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalBody,
   ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  HStack,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import {
   fetchAllPropertyData,
-  selectPropertyData,
+  DeletePropertyData,
+  selectpropertyData,
   selectTotalPages,
-  selectPropertyLoading,
-  selectPropertyError,
-  editPropertyData,
-  deleteProperty,
-  togglePropertyStatus,
+  selectpropertyLoading,
+  selectpropertyError,
 } from "../../app/Slices/propertiesSlice";
+import NoData from "../Not_Found/NoData";
+import Error502 from "../Not_Found/Error502";
+import Loader from "../Not_Found/Loader";
 
-const MyTable = () => {
+const Properties = () => {
   const dispatch = useDispatch();
-  const [location, setLocation] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isEditConfirmOpen, setIsEditConfirmOpen] = useState(false);
-  const [propertyToDelete, setPropertyToDelete] = useState(null);
-  const [editFormData, setEditFormData] = useState({
-    propertyNo: "",
-    propertyFor: "",
-    propertyType: "",
-    propertySubtype: "",
-    size: "",
-    location: "",
-    subLocation: "",
-  });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedPropertyId, setSelectedPropertyId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState("");
 
-  const propertyData = useSelector(selectPropertyData);
-  const propertyError = useSelector(selectPropertyError);
-  const propertyLoading = useSelector(selectPropertyLoading);
+  const propertyData = useSelector(selectpropertyData);
+  const propertyError = useSelector(selectpropertyError);
+  const propertyLoading = useSelector(selectpropertyLoading);
   const totalPages = useSelector(selectTotalPages);
+  const toast = useToast();
 
   useEffect(() => {
-    dispatch(fetchAllPropertyData(currentPage, searchTerm, location));
-  }, [dispatch, currentPage, searchTerm, location]);
+    dispatch(fetchAllPropertyData(currentPage, "", searchTerm));
+  }, [dispatch, filters, currentPage, searchTerm]);
 
-  const handleEdit = (property) => {
-    setEditFormData(property);
-    setIsEditOpen(true);
+  const openDeleteModal = (id) => {
+    setSelectedPropertyId(id);
+    setIsModalOpen(true);
   };
 
-  const handleEditSubmit = () => {
-    setIsEditConfirmOpen(true);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedPropertyId(null);
   };
 
-  const handleEditConfirm = () => {
-    dispatch(editPropertyData(editFormData.id, editFormData));
-    setIsEditOpen(false);
-    setIsEditConfirmOpen(false);
-  };
-
-  // Inside your MyTable component...
-
-  const handleDelete = () => {
-    if (propertyToDelete) {
-      dispatch(deleteProperty(propertyToDelete))
-        .unwrap() // Use unwrap to handle fulfilled and rejected cases
-        .then(() => {
-          console.log("Property deleted successfully");
-        })
-        .catch((error) => {
-          console.error("Failed to delete property:", error);
-        });
+  const handleDelete = async () => {
+    try {
+      await dispatch(DeletePropertyData(selectedPropertyId));
+      toast({
+        title: "Property deleted.",
+        description: "The property has been successfully deleted.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete the property.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      closeModal();
     }
-    setIsDeleteOpen(false);
-    setPropertyToDelete(null);
   };
 
-
-  const handleToggleStatus = (propertyNo, currentStatus) => {
-    const newStatus = currentStatus === "Active"
-      ? "Inactive"
-      : currentStatus === "Inactive"
-        ? "Pending"
-        : "Active"; // Cycle through the statuses
-    dispatch(togglePropertyStatus(newStatus, propertyNo));
+  const handleEdit = (id) => {
+    console.log("Edit property with id:", id);
   };
 
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const renderPageButtons = () => {
-    return Array.from({ length: totalPages }, (_, index) => (
-      <Button
-        key={index + 1}
-        onClick={() => handlePageClick(index + 1)}
-        colorScheme={index + 1 === currentPage ? "blue" : "gray"}
-        size="sm"
-        mr={2}
-      >
-        {index + 1}
-      </Button>
-    ));
+  const handleFirstPage = () => handlePageChange(1);
+  const handleLastPage = () => handlePageChange(totalPages);
+  const handleNextPage = () => {
+    if (currentPage < totalPages) handlePageChange(currentPage + 1);
   };
+  const handlePrevPage = () => {
+    if (currentPage > 1) handlePageChange(currentPage - 1);
+  };
+
+  const renderPaginationButtons = () => {
+    const pages = [];
+    if (currentPage > 2) {
+      pages.push(
+        <Button
+          key="first"
+          onClick={handleFirstPage}
+          colorScheme="black"
+          variant="outline"
+          color="white"
+        >
+          First
+        </Button>
+      );
+    }
+    if (currentPage > 1) {
+      pages.push(
+        <Button
+          key="prev"
+          onClick={handlePrevPage}
+          colorScheme="black"
+          variant="outline"
+          color="white"
+        >
+          Previous
+        </Button>
+      );
+    }
+
+    const pageRange = 3;
+    let startPage = Math.max(1, currentPage - pageRange);
+    let endPage = Math.min(totalPages, currentPage + pageRange);
+
+    if (startPage > 1) {
+      pages.push(
+        <Button
+          key="1"
+          onClick={() => handlePageChange(1)}
+          colorScheme="black"
+          variant="solid"
+          color="white"
+        >
+          1
+        </Button>
+      );
+      if (startPage > 2) {
+        pages.push(<Text key="dots1">...</Text>);
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <Button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          colorScheme={i === currentPage ? "teal" : "black"}
+          variant="solid"
+          color={i === currentPage ? "white" : "white"}
+          disabled={i === currentPage}
+        >
+          {i}
+        </Button>
+      );
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pages.push(<Text key="dots2">...</Text>);
+      }
+      pages.push(
+        <Button
+          key={totalPages}
+          onClick={() => handlePageChange(totalPages)}
+          colorScheme="black"
+          variant="solid"
+          color="white"
+        >
+          {totalPages}
+        </Button>
+      );
+    }
+
+    if (currentPage < totalPages) {
+      pages.push(
+        <Button
+          key="next"
+          onClick={handleNextPage}
+          colorScheme="black"
+          variant="outline"
+          color="white"
+        >
+          Next
+        </Button>
+      );
+    }
+
+    if (totalPages > 2) {
+      pages.push(
+        <Button
+          key="last"
+          onClick={handleLastPage}
+          colorScheme="black"
+          variant="outline"
+          color="white"
+        >
+          Last
+        </Button>
+      );
+    }
+
+    return pages;
+  };
+
+  const filteredProperties = propertyData.filter((item) => {
+    const matchesSearch = item.propertyNo
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesStatus = selectedStatus
+      ? item.status === selectedStatus
+      : true;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  // Display error message if there's an error
+  if (propertyError) {
+    return <Error502 />;
+  }
 
   return (
-    <ChakraProvider>
-      <Box
-        overflowX="auto"
-        borderRadius="30px"
-        borderWidth={1}
-        borderColor="gray.300"
-        p={6}
+    <Box
+      overflowX="auto"
+      borderRadius="30px"
+      borderWidth={1}
+      borderColor="gray.300"
+      p={4}
+    >
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        mb={5}
+        mt={4}
+        flexWrap="wrap"
+        flexDirection={{ base: "column", md: "row" }}
       >
+        <Heading fontSize="30px" ml="10px" mb={2} flex="1">
+          Properties
+        </Heading>
         <Flex
-          direction={{ base: "column", md: "row" }}
           alignItems="center"
-          justifyContent="space-between"
-          mb={10}
-          mt={4}
+          mb={2}
+          flex="1"
+          justifyContent="flex-end"
+          flexDirection={{ base: "column", md: "row" }}
         >
-          <Heading fontSize={{ base: "24px", md: "30px" }} ml="10px">
-            Properties
-          </Heading>
-          <InputGroup width={{ base: "100%", md: "220px" }} mt={{ base: 4, md: 0 }} ml={{ md: "450px" }}>
+          <InputGroup width="250px" mr={4}>
             <InputLeftElement pointerEvents="none">
               <SearchIcon color="gray.300" />
             </InputLeftElement>
             <Input
-              color="gray.300"
-              placeholder="Search..."
+              placeholder="Search by Property No..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               borderRadius={40}
             />
           </InputGroup>
-          <Box mr={{ base: 0, md: "25px" }} mt={{ base: 4, md: 0 }}>
-            <Select
-              placeholder="Status"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+          <Menu _hover={{ border: "1px solid white", bg: "transparent" }}>
+            <MenuButton
+              as={Button}
+              bg="black"
+              _hover={{ bg: "transparent" }}
+              border="1px solid gray"
+              color="white"
+              mt={{ base: "15px", md: "0" }}
+              rightIcon={<ChevronDownIcon color="white" />}
             >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-              <option value="Pending">Pending</option>
-            </Select>
-          </Box>
+              {selectedStatus || "Select Status"}
+            </MenuButton>
+            <MenuList bg="black" color="white">
+              <MenuItem
+                onClick={() => setSelectedStatus("")}
+                border="1px solid gray"
+                bg="black"
+                _hover={{ border: "1px solid white", bg: "black" }}
+              >
+                All
+              </MenuItem>
+              <MenuItem
+                onClick={() => setSelectedStatus("Active")}
+                border="1px solid gray"
+                bg="black"
+                _hover={{ border: "1px solid white", bg: "black" }}
+              >
+                Active
+              </MenuItem>
+              <MenuItem
+                onClick={() => setSelectedStatus("Inactive")}
+                border="1px solid gray"
+                bg="black"
+                _hover={{ border: "1px solid white", bg: "black" }}
+              >
+                Inactive
+              </MenuItem>
+              <MenuItem
+                onClick={() => setSelectedStatus("Pending")}
+                bg="black"
+                border="1px solid gray"
+                _hover={{ border: "1px solid white", bg: "black" }}
+              >
+                Pending
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </Flex>
+      </Flex>
 
-        {propertyError && (
-          <Text color="red.500" mb={4}>
-            {propertyError}
-          </Text>
-        )}
-
-        <TableContainer>
-          <Table size="md">
+      {/* Table Content with conditional loading */}
+      <TableContainer>
+        {propertyLoading ? (
+          <Loader />
+        ) : (
+          <Table size="sm">
             <Thead>
               <Tr>
-                <Th>Property NO</Th>
-                <Th>Property For</Th>
-                <Th>Property Type</Th>
-                <Th>Property Subtype</Th>
-                <Th>Size</Th>
-                <Th>Location</Th>
-                <Th>Sublocation</Th>
-                <Th>Status</Th>
-                <Th>Actions</Th>
+                <Th textAlign="center">No.</Th>
+                <Th textAlign="center">Property For</Th>
+                <Th textAlign="center">Type</Th>
+                <Th textAlign="center">Subtype</Th>
+                <Th textAlign="center">Size</Th>
+                <Th textAlign="center">Location</Th>
+                <Th textAlign="center">SubLocation</Th>
+                <Th textAlign="center">Status</Th>
+                <Th textAlign="center">Action</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {propertyLoading ? (
+              {filteredProperties.length === 0 ? (
                 <Tr>
                   <Td colSpan={9} textAlign="center">
-                    Loading...
+                    <NoData />
                   </Td>
                 </Tr>
-              ) : propertyData.length > 0 ? (
-                propertyData.map((item) => (
-                  <Tr key={item.propertyNo}>
-                    <Td>{item.propertyNo}</Td>
-                    <Td>{item.propertyFor}</Td>
-                    <Td>{item.propertyType}</Td>
-                    <Td>{item.propertySubtype}</Td>
-                    <Td>{item.size}</Td>
-                    <Td>{item.location}</Td>
-                    <Td>{item.subLocation}</Td>
-                    <Td>
-                      <Button
-                        onClick={() => handleToggleStatus(item.propertyNo, item.status)}
-                        size="sm"
-                        colorScheme={
-                          item.status === "Active" ? "green" :
-                            item.status === "Inactive" ? "red" :
-                              "yellow"
+              ) : (
+                filteredProperties.map((item) => (
+                  <Tr key={item._id}>
+                    <Td textAlign="center">{item.propertyNo}</Td>
+                    <Td textAlign="center">{item.propertyFor}</Td>
+                    <Td textAlign="center">{item.propertyType}</Td>
+                    <Td textAlign="center">{item.propertySubtype}</Td>
+                    <Td textAlign="center">{item.size}</Td>
+                    <Td textAlign="center">{item.location}</Td>
+                    <Td textAlign="center">{item.subLocation}</Td>
+                    <Td textAlign="center">
+                      <Text
+                        color={
+                          item.status === "Active"
+                            ? "green.500"
+                            : item.status === "Inactive"
+                            ? "red.500"
+                            : "yellow.500"
                         }
-                        variant="outline"
                       >
                         {item.status}
-                      </Button>
+                      </Text>
                     </Td>
                     <Td>
                       <Button
-                        onClick={() => handleEdit(item)}
+                        onClick={() => handleEdit(item._id)}
+                        color="white"
+                        variant="outline"
+                        _hover={{ bg: "transparent" }}
                         size="sm"
                         mr={2}
-                        variant="outline"
-                        isDisabled={propertyLoading}
                       >
-                        Edit
+                        View
                       </Button>
                       <Button
-                        onClick={() => {
-                          setPropertyToDelete(item.id);
-                          setIsDeleteOpen(true);
-                        }}
+                        onClick={() => openDeleteModal(item._id)}
+                        colorScheme="red"
                         size="sm"
-                        variant="outline"
-                        isDisabled={propertyLoading}
                       >
                         Delete
                       </Button>
                     </Td>
                   </Tr>
                 ))
-              ) : (
-                <Tr>
-                  <Td colSpan={9} textAlign="center">
-                    No properties found.
-                  </Td>
-                </Tr>
               )}
             </Tbody>
           </Table>
-        </TableContainer>
+        )}
+      </TableContainer>
 
-        <Flex justifyContent="center" mt={6} mb={4}>
-          {currentPage > 1 && (
-            <Button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              isDisabled={propertyLoading}
-              mr={2}
-              variant="outline"
-            >
-              Previous
+      {/* Pagination controls */}
+      <HStack spacing={4} justifyContent="center" mt={6}>
+        {renderPaginationButtons()}
+      </HStack>
+
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <ModalOverlay />
+        <ModalContent bg="black">
+          <ModalHeader color="white">Confirm Deletion</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody color="white">
+            Are you sure you want to delete this property? This action cannot be
+            undone.
+          </ModalBody>
+          <ModalFooter>
+            <Button color="white" variant="outline" onClick={closeModal}>
+              Cancel
             </Button>
-          )}
-          {renderPageButtons()}
-          {currentPage < totalPages && (
-            <Button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              isDisabled={propertyLoading}
-              ml={2}
-              variant="outline"
-            >
-              Next
+            <Button colorScheme="red" onClick={handleDelete} ml={3}>
+              Delete
             </Button>
-          )}
-        </Flex>
-
-        {/* Confirmation Modal for Deleting */}
-      
-        <Modal isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Confirm Delete</ModalHeader>
-            <ModalBody>
-              Are you sure you want to delete property number {propertyToDelete}?
-            </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={handleDelete}>
-                Confirm
-              </Button>
-              <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-
-
-        {/* Confirmation Modal for Editing */}
-        <Modal isOpen={isEditConfirmOpen} onClose={() => setIsEditConfirmOpen(false)}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Confirm Edit</ModalHeader>
-            <ModalBody>
-              Are you sure you want to save changes to property number {editFormData.propertyNo}?
-            </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={handleEditConfirm}>
-                Confirm
-              </Button>
-              <Button variant="outline" onClick={() => setIsEditConfirmOpen(false)}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-
-        {/* Edit Modal */}
-        <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Edit Property</ModalHeader>
-            <ModalBody>
-              <Input
-                placeholder="Property For"
-                value={editFormData.propertyFor}
-                onChange={(e) => setEditFormData({ ...editFormData, propertyFor: e.target.value })}
-                mb={4}
-              />
-              <Input
-                placeholder="Property Type"
-                value={editFormData.propertyType}
-                onChange={(e) => setEditFormData({ ...editFormData, propertyType: e.target.value })}
-                mb={4}
-              />
-              <Input
-                placeholder="Property Subtype"
-                value={editFormData.propertySubtype}
-                onChange={(e) => setEditFormData({ ...editFormData, propertySubtype: e.target.value })}
-                mb={4}
-              />
-              <Input
-                placeholder="Size"
-                value={editFormData.size}
-                onChange={(e) => setEditFormData({ ...editFormData, size: e.target.value })}
-                mb={4}
-              />
-              <Input
-                placeholder="Location"
-                value={editFormData.location}
-                onChange={(e) => setEditFormData({ ...editFormData, location: e.target.value })}
-                mb={4}
-              />
-              <Input
-                placeholder="Sublocation"
-                value={editFormData.subLocation}
-                onChange={(e) => setEditFormData({ ...editFormData, subLocation: e.target.value })}
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={handleEditSubmit}>
-                Save
-              </Button>
-              <Button variant="outline" onClick={() => setIsEditOpen(false)}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </Box>
-    </ChakraProvider>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Box>
   );
 };
 
-export default MyTable;
+export default Properties;
