@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  ChakraProvider,
   Table,
   Thead,
   Tbody,
@@ -43,6 +42,7 @@ import {
 import NoData from "../Not_Found/NoData";
 import Error502 from "../Not_Found/Error502";
 import Loader from "../Not_Found/Loader";
+import ViewPage from "./ViewPage";
 
 const Properties = () => {
   const dispatch = useDispatch();
@@ -52,7 +52,6 @@ const Properties = () => {
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");
-
   const propertyData = useSelector(selectpropertyData);
   const propertyError = useSelector(selectpropertyError);
   const propertyLoading = useSelector(selectpropertyLoading);
@@ -72,7 +71,7 @@ const Properties = () => {
     setIsModalOpen(false);
     setSelectedPropertyId(null);
   };
-
+  
   const handleDelete = async () => {
     try {
       await dispatch(DeletePropertyData(selectedPropertyId));
@@ -94,10 +93,6 @@ const Properties = () => {
     } finally {
       closeModal();
     }
-  };
-
-  const handleEdit = (id) => {
-    console.log("Edit property with id:", id);
   };
 
   const handlePageChange = (newPage) => {
@@ -380,16 +375,7 @@ const Properties = () => {
                       </Text>
                     </Td>
                     <Td>
-                      <Button
-                        onClick={() => handleEdit(item._id)}
-                        color="white"
-                        variant="outline"
-                        _hover={{ bg: "transparent" }}
-                        size="sm"
-                        mr={2}
-                      >
-                        View
-                      </Button>
+                      <ViewPage/>
                       <Button
                         onClick={() => openDeleteModal(item._id)}
                         colorScheme="red"
