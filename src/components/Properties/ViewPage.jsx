@@ -48,7 +48,7 @@ function ViewPage() {
 
   const handleEdit = async () => {
     try {
-      await dispatch(EditPropertyData({ id: selectedPropertyId, data: propertyData })).unwrap();
+      await dispatch(EditPropertyData({ id: selectedPropertyId, data: propertyData }));
       toast({
         title: "Property updated.",
         description: "The property has been successfully updated.",
@@ -90,7 +90,9 @@ function ViewPage() {
           <ModalHeader>Edit Property</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-          
+          <ModalBody color="white">
+            Are you sure you want to update this property
+          </ModalBody>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme='blue' mr={3} onClick={handleEdit}>
