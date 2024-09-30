@@ -12,13 +12,12 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { EditPropertyData, fetchAllPropertyData, selectpropertyData, selectpropertyLoading, selectpropertyError } from '../../app/Slices/propertiesSlice';
-import Loader from "../Not_Found/Loader";
+import { EditPropertyData, fetchAllPropertyData, selectpropertyData, selectpropertyError } from '../../app/Slices/propertiesSlice';
 
 function ViewPage() {
   const dispatch = useDispatch();
   const properties = useSelector(selectpropertyData);
-  const isLoading = useSelector(selectpropertyLoading);
+  const [filters, setFilter] = useState("");
   const propertyError = useSelector(selectpropertyError);
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [propertyData, setPropertyData] = useState({ name: '', address: '' });
@@ -27,8 +26,8 @@ function ViewPage() {
 
   // Fetch property data on mount
   useEffect(() => {
-    dispatch(fetchAllPropertyData());
-  }, [dispatch]);
+    dispatch(fetchAllPropertyData);
+  }, [dispatch,filters]);
 
   const openEditModal = (property) => {
     setSelectedPropertyId(property._id);
@@ -53,7 +52,7 @@ function ViewPage() {
       toast({
         title: "Property updated.",
         description: "The property has been successfully updated.",
-        status: "success",
+        status: "success", // Change this to "success"
         duration: 3000,
         isClosable: true,
       });
@@ -69,16 +68,7 @@ function ViewPage() {
       closeModal();
     }
   };
-
-  // Display loader if loading
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  // Display error message if there's an error
-  if (propertyError) {
-    return <div>Error: {propertyError}</div>;
-  }
+  
 
   return (
     <>
@@ -100,22 +90,7 @@ function ViewPage() {
           <ModalHeader>Edit Property</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <form>
-              <input
-                type="text"
-                name="name"
-                value={propertyData.name}
-                onChange={handleChange}
-                placeholder="Property Name"
-              />
-              <input
-                type="text"
-                name="address"
-                value={propertyData.address}
-                onChange={handleChange}
-                placeholder="Property Address"
-              />
-            </form>
+          
           </ModalBody>
           <ModalFooter>
             <Button colorScheme='blue' mr={3} onClick={handleEdit}>
