@@ -11,6 +11,8 @@ import Login from "../components/Login/Login";
 import { AnimatePresence } from "framer-motion";
 import Not_Found from "../components/Not_Found/Not_Found";
 import Logout from "../components/Login/Logout";
+import PropertyView from "../components/Properties/PropertyView";
+
 
 const Routing = () => {
   return (
@@ -27,6 +29,7 @@ const Routing = () => {
           <Route path="/roles" element={<Roles />} />
           <Route path="/users" element={<Users />} />
           <Route path="/properties" element={<Properties />} />
+          <Route path="/propertyview" element={<PropertyView />} />
           <Route path="/leads" element={<Leads />} />
           <Route path="/contact" element={<Contact />} />
         </Route>

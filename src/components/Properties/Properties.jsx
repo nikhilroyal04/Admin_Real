@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import {
   Table,
   Thead,
@@ -42,18 +43,17 @@ import {
 import NoData from "../Not_Found/NoData";
 import Error502 from "../Not_Found/Error502";
 import Loader from "../Not_Found/Loader";
-import PropertyView from "./PropertyView";
 
 
 const Properties = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize navigate
   const [filters, setFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
   const [selectedStatus, setSelectedStatus] = useState("");
   const propertyData = useSelector(selectpropertyData);
   const propertyError = useSelector(selectpropertyError);
@@ -74,11 +74,13 @@ const Properties = () => {
     setIsModalOpen(false);
     setSelectedPropertyId(null);
   };
-  const openEditModal = (id) => {
-    setSelectedPropertyId(id); // Set the selected property ID
-    setIsEditModalOpen(true); // Open the modal
-  };
 
+  const openEditModal = (id) => {
+    setSelectedPropertyId(id);
+    setIsEditModalOpen(true)
+    navigate(`/PropertyView`);
+  };
+  
 
   const handleDelete = async () => {
     try {
@@ -383,12 +385,7 @@ const Properties = () => {
                       </Text>
                     </Td>
                     <Td>
-                      <Button onClick={() => openEditModal(item._id)}
-                        colorScheme="red"
-                        size="sm"
-                        mr={3}>
-                         {PropertyView} View
-                        </Button>
+                    <Button onClick={openEditModal}>View</Button>
                       <Button
                         onClick={() => openDeleteModal(item._id)}
                         colorScheme="red"
@@ -417,8 +414,7 @@ const Properties = () => {
           <ModalHeader color="white">Confirm Deletion</ModalHeader>
           <ModalCloseButton />
           <ModalBody color="white">
-            Are you sure you want to delete this property? This action cannot be
-            undone.
+            Are you sure you want to delete this property? This action cannot be undone.
           </ModalBody>
           <ModalFooter>
             <Button color="white" variant="outline" onClick={closeModal}>
