@@ -42,7 +42,8 @@ import {
 import NoData from "../Not_Found/NoData";
 import Error502 from "../Not_Found/Error502";
 import Loader from "../Not_Found/Loader";
-import ViewPage from "./ViewPage";
+import PropertyView from "./PropertyView";
+
 
 const Properties = () => {
   const dispatch = useDispatch();
@@ -51,6 +52,8 @@ const Properties = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   const [selectedStatus, setSelectedStatus] = useState("");
   const propertyData = useSelector(selectpropertyData);
   const propertyError = useSelector(selectpropertyError);
@@ -71,7 +74,12 @@ const Properties = () => {
     setIsModalOpen(false);
     setSelectedPropertyId(null);
   };
-  
+  const openEditModal = (id) => {
+    setSelectedPropertyId(id); // Set the selected property ID
+    setIsEditModalOpen(true); // Open the modal
+  };
+
+
   const handleDelete = async () => {
     try {
       await dispatch(DeletePropertyData(selectedPropertyId));
@@ -367,15 +375,20 @@ const Properties = () => {
                           item.status === "Active"
                             ? "green.500"
                             : item.status === "Inactive"
-                            ? "red.500"
-                            : "yellow.500"
+                              ? "red.500"
+                              : "yellow.500"
                         }
                       >
                         {item.status}
                       </Text>
                     </Td>
                     <Td>
-                      <ViewPage/>
+                      <Button onClick={() => openEditModal(item._id)}
+                        colorScheme="red"
+                        size="sm"
+                        mr={3}>
+                         {PropertyView} View
+                        </Button>
                       <Button
                         onClick={() => openDeleteModal(item._id)}
                         colorScheme="red"
