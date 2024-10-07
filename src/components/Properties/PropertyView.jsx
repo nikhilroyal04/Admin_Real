@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import {
   EditPropertyData,
   fetchPropertyById,
@@ -17,7 +18,8 @@ import {
   Alert,
 } from '@chakra-ui/react';
 
-const PropertyView = ({ id }) => {
+const PropertyView = () => {
+  const {id}  = useParams(); // Get the ID from the route parameters
   const dispatch = useDispatch();
   const loading = useSelector(selectpropertyLoading);
   const error = useSelector(selectpropertyError);

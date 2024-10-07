@@ -75,10 +75,10 @@ const Properties = () => {
     setSelectedPropertyId(null);
   };
 
-  const openEditModal = (id) => {
+  const handleView = (id) => {
     setSelectedPropertyId(id);
     setIsEditModalOpen(true)
-    navigate(`/PropertyView`);
+    navigate(`/propertyview/:id`);
   };
 
   const handleDelete = async () => {
@@ -385,7 +385,7 @@ const Properties = () => {
                     </Td>
                     <Td>
                       <Button
-                        onClick={() => openEditModal(item._id)}
+                        onClick={handleView(item._id)}
                         colorScheme="teal"
                         size="sm"
                         mr={3}

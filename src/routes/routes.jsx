@@ -29,7 +29,7 @@ const Routing = () => {
           <Route path="/roles" element={<Roles />} />
           <Route path="/users" element={<Users />} />
           <Route path="/properties" element={<Properties />} />
-          <Route path="/propertyview" element={<PropertyView />} />
+          <Route path="/propertyview/:id" element={<PropertyView />} />
           <Route path="/leads" element={<Leads />} />
           <Route path="/contact" element={<Contact />} />
         </Route>
