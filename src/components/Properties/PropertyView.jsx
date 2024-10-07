@@ -17,7 +17,7 @@ import {
   Alert,
 } from '@chakra-ui/react';
 
-const PropertyView = ({ propertyId }) => {
+const PropertyView = ({ id }) => {
   const dispatch = useDispatch();
   const loading = useSelector(selectpropertyLoading);
   const error = useSelector(selectpropertyError);
@@ -26,10 +26,10 @@ const PropertyView = ({ propertyId }) => {
   useEffect(() => {
     // Fetch property details by ID when component mounts or propertyId changes
     const fetchData = async () => {
-      await dispatch(fetchPropertyById(propertyId));
+      await dispatch(fetchPropertyById(id));
     };
     fetchData();
-  }, [dispatch, propertyId]);
+  }, [dispatch, id]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -45,7 +45,7 @@ const PropertyView = ({ propertyId }) => {
     };
 
     // Dispatch action to edit property data
-    dispatch(EditPropertyData(propertyId, formData));
+    dispatch(EditPropertyData(id, formData));
   };
 
   // Show loading spinner
@@ -65,7 +65,7 @@ const PropertyView = ({ propertyId }) => {
         <Flex wrap="wrap" gap={4}>
           <FormControl>
             <FormLabel htmlFor="name">Property For</FormLabel>
-            <Input id="name" name="name" defaultValue={property?.propertyFor} required />
+            <Input id="propertyFor" name="propertyFor" defaultValue={property?.propertyFor} required />
           </FormControl>
           <FormControl>
             <FormLabel htmlFor="type">Type</FormLabel>
