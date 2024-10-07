@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { EditPropertyData,fetchAllPropertyData } from '../../app/Slices/propertiesSlice';
 import {
-  Box,
+  EditPropertyData,
+  fetchPropertyById,
+  selectPropertyById,
+  selectpropertyLoading,
+  selectpropertyError,
+} from '../../app/Slices/propertiesSlice';
+import {
   Button,
   Flex,
   FormControl,
@@ -14,29 +19,24 @@ import {
 
 const PropertyView = ({ propertyId }) => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const property = useSelector((state) => state.properties[propertyId]);
+  const loading = useSelector(selectpropertyLoading);
+  const error = useSelector(selectpropertyError);
+  const property = useSelector(selectPropertyById);
 
   useEffect(() => {
+    // Fetch property details by ID when component mounts or propertyId changes
     const fetchData = async () => {
-      try {
-        await dispatch(fetchAllPropertyData(propertyId)); // Assume this action fetches property data
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
+      await dispatch(fetchPropertyById(propertyId));
     };
-
     fetchData();
   }, [dispatch, propertyId]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     
+    // Gather form data
     const formData = {
-      name: event.target.name.value,
+      propertyFor: event.target.name.value,
       type: event.target.type.value,
       subtype: event.target.subtype.value,
       size: event.target.size.value,
@@ -44,24 +44,28 @@ const PropertyView = ({ propertyId }) => {
       subLocation: event.target.subLocation.value,
     };
 
-    dispatch(EditPropertyData(propertyId, formData)); // Dispatch the edit action
+    // Dispatch action to edit property data
+    dispatch(EditPropertyData(propertyId, formData));
   };
 
+  // Show loading spinner
   if (loading) {
     return <Spinner size="xl" />;
   }
 
+  // Show error message if there's an error
   if (error) {
     return <Alert status="error">{error}</Alert>;
   }
 
+  // Render the form with property details
   return (
     <form onSubmit={handleSubmit}>
       <Flex direction="column" mb={4}>
         <Flex wrap="wrap" gap={4}>
           <FormControl>
             <FormLabel htmlFor="name">Property For</FormLabel>
-            <Input id="name" name="name" defaultValue={property?.name} required />
+            <Input id="name" name="name" defaultValue={property?.propertyFor} required />
           </FormControl>
           <FormControl>
             <FormLabel htmlFor="type">Type</FormLabel>
