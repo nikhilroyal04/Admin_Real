@@ -76,9 +76,7 @@ const Properties = () => {
   };
 
   const handleView = (id) => {
-    setSelectedPropertyId(id);
-    setIsEditModalOpen(true)
-    navigate(`/propertyview/:id`);
+    navigate(`/propertyView/${id}`);
   };
 
   const handleDelete = async () => {
