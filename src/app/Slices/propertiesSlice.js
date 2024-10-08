@@ -93,7 +93,7 @@ export const AddPropertyData = (formData) => async (dispatch) => {
 };
 
 // Edit property action
-export const EditPropertyData = (id,formData) => async (dispatch) => {
+export const EditPropertyData = (id, formData) => async (dispatch) => {
   try {
     await axios.put(
       `${import.meta.env.VITE_BASE_URL}property/updateProperty/${id}`,

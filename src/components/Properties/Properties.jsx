@@ -44,7 +44,6 @@ import NoData from "../Not_Found/NoData";
 import Error502 from "../Not_Found/Error502";
 import Loader from "../Not_Found/Loader";
 
-
 const Properties = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize navigate
@@ -76,7 +75,7 @@ const Properties = () => {
   };
 
   const handleView = (id) => {
-    navigate(`/propertyView/${id}`);
+    navigate(`/properties/${id}`);
   };
 
   const handleDelete = async () => {
@@ -374,8 +373,8 @@ const Properties = () => {
                           item.status === "Active"
                             ? "green.500"
                             : item.status === "Inactive"
-                              ? "red.500"
-                              : "yellow.500"
+                            ? "red.500"
+                            : "yellow.500"
                         }
                       >
                         {item.status}
@@ -383,7 +382,7 @@ const Properties = () => {
                     </Td>
                     <Td>
                       <Button
-                        onClick={handleView(item._id)}
+                        onClick={() => handleView(item._id)}
                         colorScheme="teal"
                         size="sm"
                         mr={3}
@@ -418,7 +417,8 @@ const Properties = () => {
           <ModalHeader color="white">Confirm Deletion</ModalHeader>
           <ModalCloseButton />
           <ModalBody color="white">
-            Are you sure you want to delete this property? This action cannot be undone.
+            Are you sure you want to delete this property? This action cannot be
+            undone.
           </ModalBody>
           <ModalFooter>
             <Button color="white" variant="outline" onClick={closeModal}>

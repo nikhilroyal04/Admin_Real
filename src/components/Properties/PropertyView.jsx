@@ -1,99 +1,407 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
 import {
-  EditPropertyData,
-  fetchPropertyById,
-  selectPropertyById,
-  selectpropertyLoading,
-  selectpropertyError,
-} from '../../app/Slices/propertiesSlice';
-import {
-  Button,
-  Flex,
+  Box,
+  Grid,
   FormControl,
   FormLabel,
   Input,
-  Spinner,
-  Alert,
-} from '@chakra-ui/react';
+  Heading,
+  Button,
+  Image,
+  Select,
+} from "@chakra-ui/react";
+import { useSelector, useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import {
+  selectPropertyById,
+  selectpropertyLoading,
+  selectpropertyError,
+  fetchPropertyById,
+  EditPropertyData,
+} from "../../app/Slices/propertiesSlice";
+import Loader from "../Not_Found/Loader";
+import Error502 from "../Not_Found/Error502";
 
-const PropertyView = () => {
-  const {id}  = useParams(); // Get the ID from the route parameters
+export default function PropertyView() {
+  const { id } = useParams();
   const dispatch = useDispatch();
+
+  const property = useSelector(selectPropertyById);
   const loading = useSelector(selectpropertyLoading);
   const error = useSelector(selectpropertyError);
-  const property = useSelector(selectPropertyById);
+
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [formData, setFormData] = useState({
+    projectName: "",
+    property: "",
+    propertyFor: "",
+    propertyType: "",
+    propertySubtype: "",
+    size: "",
+    location: "",
+    subLocation: "",
+    address: "",
+    currentCost: "",
+    offeredCost: "",
+    returnRY: "",
+    status: "Pending",
+    reraApproved: "",
+    reraNo: "",
+    createdBy: "",
+    loanApplicable: "",
+    paymentOptions: "",
+    media: [],
+    facility: [],
+    connectivity: [],
+    documents: [],
+    usp: [],
+    registeredNo: "",
+    createdOn: "",
+    updatedOn: Date.now(),
+  }); // Single state for form data
 
   useEffect(() => {
-    // Fetch property details by ID when component mounts or propertyId changes
-    const fetchData = async () => {
-      await dispatch(fetchPropertyById(id));
-    };
-    fetchData();
+    dispatch(fetchPropertyById(id));
   }, [dispatch, id]);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    
-    // Gather form data
-    const formData = {
-      propertyFor: event.target.name.value,
-      type: event.target.type.value,
-      subtype: event.target.subtype.value,
-      size: event.target.size.value,
-      location: event.target.location.value,
-      subLocation: event.target.subLocation.value,
-    };
+  useEffect(() => {
+    if (property) {
+      setFormData({
+        projectName: property.projectName,
+        property: property.property,
+        propertyFor: property.propertyFor,
+        propertyType: property.propertyType,
+        propertySubtype: property.propertySubtype,
+        size: property.size,
+        location: property.location,
+        subLocation: property.subLocation,
+        address: property.address,
+        currentCost: property.currentCost,
+        offeredCost: property.offeredCost,
+        returnRY: property.returnRY,
+        status: property.status,
+        reraApproved: property.reraApproved,
+        reraNo: property.reraNo,
+        createdBy: property.createdBy,
+        loanApplicable: property.loanApplicable,
+        paymentOptions: property.paymentOptions,
+        media: property.media || [],
+        facility: property.facility || [],
+        connectivity: property.connectivity || [],
+        documents: property.documents || [],
+        usp: property.usp || [],
+        registeredNo: property.registeredNo,
+        createdOn: property.createdOn,
+        updatedOn: Date.now(),
+      });
+    }
+  }, [property]);
 
-    // Dispatch action to edit property data
-    dispatch(EditPropertyData(id, formData));
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <Error502 />;
+  }
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  // Show loading spinner
-  if (loading) {
-    return <Spinner size="xl" />;
-  }
+  // Handle save (dispatch action to edit property)
+  const handleSave = () => {
+    dispatch(EditPropertyData(id, formData));
+    setIsEditMode(false); // Exit edit mode after saving
+  };
 
-  // Show error message if there's an error
-  if (error) {
-    return <Alert status="error">{error}</Alert>;
-  }
+  // Handle cancel (exit edit mode without saving)
+  const handleCancel = () => {
+    setIsEditMode(false);
+    setFormData({
+      projectName: property.projectName,
+      property: property.property,
+      propertyFor: property.propertyFor,
+      propertyType: property.propertyType,
+      propertySubtype: property.propertySubtype,
+      size: property.size,
+      location: property.location,
+      subLocation: property.subLocation,
+      address: property.address,
+      currentCost: property.currentCost,
+      offeredCost: property.offeredCost,
+      returnRY: property.returnRY,
+      status: property.status,
+      reraApproved: property.reraApproved,
+      reraNo: property.reraNo,
+      createdBy: property.createdBy,
+      loanApplicable: property.loanApplicable,
+      paymentOptions: property.paymentOptions,
+      media: property.media,
+      facility: property.facility || [],
+      connectivity: property.connectivity || [],
+      documents: property.documents || [],
+      usp: property.usp || [],
+      registeredNo: property.registeredNo,
+      createdOn: property.createdOn,
+      updatedOn: property.updatedOn,
+    });
+  };
 
-  // Render the form with property details
   return (
-    <form onSubmit={handleSubmit}>
-      <Flex direction="column" mb={4}>
-        <Flex wrap="wrap" gap={4}>
-          <FormControl>
-            <FormLabel htmlFor="name">Property For</FormLabel>
-            <Input id="propertyFor" name="propertyFor" defaultValue={property?.propertyFor} required />
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="type">Type</FormLabel>
-            <Input id="type" name="type" defaultValue={property?.type} required />
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="subtype">Subtype</FormLabel>
-            <Input id="subtype" name="subtype" defaultValue={property?.subtype} required />
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="size">Size</FormLabel>
-            <Input id="size" name="size" defaultValue={property?.size} required />
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="location">Location</FormLabel>
-            <Input id="location" name="location" defaultValue={property?.location} required />
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="subLocation">SubLocation</FormLabel>
-            <Input id="subLocation" name="subLocation" defaultValue={property?.subLocation} required />
-          </FormControl>
-        </Flex>
-      </Flex>
-      <Button type="submit" colorScheme="blue">Update Property</Button>
-    </form>
-  );
-};
+    <Box p={6}>
+      {/* Heading */}
 
-export default PropertyView;
+      {/* Image section - 6 larger boxes */}
+      <Grid templateColumns="repeat(6, 1fr)" gap={4} mb={8}>
+        {formData.media?.map((url, index) => (
+          <Box
+            key={index}
+            bg="gray.100"
+            p={2}
+            borderRadius="md"
+            overflow="hidden"
+            maxHeight="200px"
+          >
+            <Image
+              src={url}
+              alt={`Property Image ${index + 1}`}
+              objectFit="cover"
+              height="100%"
+              width="100%"
+            />
+          </Box>
+        ))}
+      </Grid>
+
+      {/* Property details form */}
+      <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
+        <FormControl>
+          <FormLabel>Project Name</FormLabel>
+          <Input
+            name="projectName"
+            value={formData.projectName}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Property Name</FormLabel>
+          <Input
+            name="property"
+            value={formData.property}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Property For</FormLabel>
+          <Select
+            name="propertyFor"
+            value={formData.propertyFor}
+            isDisabled={!isEditMode}
+            onChange={handleInputChange}
+          >
+            <option value="Buy">Buy</option>
+            <option value="Rent">Rent</option>
+            <option value="PG/Co-Living">PG/Co-Living</option>
+            <option value="Other">Other</option>
+          </Select>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Property Type</FormLabel>
+          <Select
+            name="propertyType"
+            value={formData.propertyType}
+            isDisabled={!isEditMode}
+            onChange={handleInputChange}
+          >
+            <option value="Commercial">Commercial</option>
+            <option value="Residential">Residential</option>
+            <option value="Other">Other</option>
+          </Select>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Property Subtype</FormLabel>
+          <Select
+            name="propertySubtype"
+            value={formData.propertySubtype}
+            isDisabled={!isEditMode}
+            onChange={handleInputChange}
+          >
+            <option value="Mall">Mall</option>
+            <option value="High Street Market">High Street Market</option>
+            <option value="Shop">Shop</option>
+            <option value="Farm House">Farm House</option>
+            <option value="Flat">Flat</option>
+            <option value="Other">Other</option>
+          </Select>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>RERA Approved</FormLabel>
+          <Select
+            name="reraApproved"
+            value={formData.reraApproved}
+            isDisabled={!isEditMode}
+            onChange={handleInputChange}
+          >
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </Select>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Status</FormLabel>
+          <Select
+            name="status"
+            value={formData.status}
+            isDisabled={!isEditMode}
+            onChange={handleInputChange}
+          >
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+            <option value="Pending">Pending</option>
+          </Select>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Size</FormLabel>
+          <Input
+            name="size"
+            value={formData.size}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Location</FormLabel>
+          <Input
+            name="location"
+            value={formData.location}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Sub-Location</FormLabel>
+          <Input
+            name="subLocation"
+            value={formData.subLocation}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Address</FormLabel>
+          <Input
+            name="address"
+            value={formData.address}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Current Cost</FormLabel>
+          <Input
+            name="currentCost"
+            value={formData.currentCost}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Offered Cost</FormLabel>
+          <Input
+            name="offeredCost"
+            value={formData.offeredCost}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Return RY</FormLabel>
+          <Input
+            name="returnRY"
+            value={formData.returnRY}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>RERA Number</FormLabel>
+          <Input
+            name="reraNo"
+            value={formData.reraNo}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Created By</FormLabel>
+          <Input
+            name="createdBy"
+            value={formData.createdBy}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Loan Applicable</FormLabel>
+          <Input
+            name="loanApplicable"
+            value={formData.loanApplicable}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Payment Options</FormLabel>
+          <Input
+            name="paymentOptions"
+            value={formData.paymentOptions}
+            isReadOnly={!isEditMode}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+      </Grid>
+
+      {/* Edit and Save/Cancel Buttons */}
+      <Box mt={6}>
+        {!isEditMode ? (
+          <Button colorScheme="teal" onClick={() => setIsEditMode(true)}>
+            Edit Property
+          </Button>
+        ) : (
+          <>
+            <Button colorScheme="teal" onClick={handleSave} mr={4}>
+              Save
+            </Button>
+            <Button colorScheme="gray" onClick={handleCancel}>
+              Cancel
+            </Button>
+          </>
+        )}
+      </Box>
+    </Box>
+  );
+}
