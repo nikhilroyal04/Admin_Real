@@ -5,7 +5,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Heading,
   Button,
   Image,
   Select,
@@ -167,6 +166,8 @@ export default function PropertyView() {
             borderRadius="md"
             overflow="hidden"
             maxHeight="200px"
+            height="150px"
+            width="250px"
           >
             <Image
               src={url}
