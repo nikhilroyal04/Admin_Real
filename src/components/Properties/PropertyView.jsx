@@ -172,10 +172,10 @@ export default function PropertyView() {
           {images.slice(0, 6).map((preview, index) => (
             <Box
               key={index}
-              height={{ xs: "100px", sm: "150px" }} // Adjust height based on screen size
-              width={{ xs: "100px", sm: "150px" }}  // Adjust width based on screen size
+              height="150px" // Fixed height
+              width="150px" // Fixed width
               textAlign="center"
-              overflowY="auto"
+              overflow="hidden" // Hide overflow
               position="relative"
               borderWidth="1px"
               borderRadius="md"
@@ -184,16 +184,16 @@ export default function PropertyView() {
               <Image
                 src={preview}
                 alt={`Preview ${index}`}
-                maxWidth="100%"
-                maxHeight="130px"
-                marginRight="10px"
-                marginTop="auto"
+                style={{
+                  width: "100%", // Fill the box
+                  height: "100%", // Fill the box
+                  objectFit: "cover", // Maintain aspect ratio
+                }}
               />
             </Box>
           ))}
-
           {/* Show a "More" card if there are more than 6 images */}
-          {images.length < 6 && (
+          {images.length < 4 && (
             <Box
               height="150px"
               width="150px"
@@ -213,6 +213,7 @@ export default function PropertyView() {
               Add Image
             </Box>
           )}
+
           <input
             id="fileInput"
             type="file"
@@ -224,7 +225,11 @@ export default function PropertyView() {
       </Grid>
 
       {/* Property details form */}
-      <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
+      <Grid
+        templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+        gap={6}
+        mt="60px"
+      >
         <FormControl>
           <FormLabel>Project Name</FormLabel>
           <Input
