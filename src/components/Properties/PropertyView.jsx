@@ -9,6 +9,7 @@ import {
   Image,
   Select,
 } from "@chakra-ui/react";
+import { GrAdd } from "react-icons/gr";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
@@ -30,6 +31,25 @@ export default function PropertyView() {
   const error = useSelector(selectpropertyError);
 
   const [isEditMode, setIsEditMode] = useState(false);
+  const [images, setImages] = useState([]);
+
+  const handleClick1 = () => {
+    document.getElementById("fileInput").click();
+  };
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    const newImages = files.map((file) => URL.createObjectURL(file));
+    setImages((prevImages) => [...prevImages, ...newImages]);
+  };
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const [formData, setFormData] = useState({
     projectName: "",
     property: "",
@@ -104,18 +124,10 @@ export default function PropertyView() {
     return <Error502 />;
   }
 
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
   // Handle save (dispatch action to edit property)
-  const handleSave = () => {
-    dispatch(EditPropertyData(id, formData));
+  const handleSave = async () => {
+    await dispatch(EditPropertyData(id, formData)); // Wait for the edit action to complete
+    dispatch(fetchPropertyById(id)); // Fetch updated property data
     setIsEditMode(false); // Exit edit mode after saving
   };
 
@@ -154,30 +166,61 @@ export default function PropertyView() {
 
   return (
     <Box p={6}>
-      {/* Heading */}
-
       {/* Image section - 6 larger boxes */}
-      <Grid templateColumns="repeat(6, 1fr)" gap={4} mb={8}>
-        {formData.media?.map((url, index) => (
-          <Box
-            key={index}
-            bg="gray.100"
-            p={2}
-            borderRadius="md"
-            overflow="hidden"
-            maxHeight="200px"
-            height="150px"
-            width="250px"
-          >
-            <Image
-              src={url}
-              alt={`Property Image ${index + 1}`}
-              objectFit="cover"
-              height="100%"
-              width="100%"
-            />
-          </Box>
-        ))}
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={12} sx={{ display: "flex", flexWrap: "wrap" }}>
+          {images.slice(0, 6).map((preview, index) => (
+            <Box
+              key={index}
+              height={{ xs: "100px", sm: "150px" }} // Adjust height based on screen size
+              width={{ xs: "100px", sm: "150px" }}  // Adjust width based on screen size
+              textAlign="center"
+              overflowY="auto"
+              position="relative"
+              borderWidth="1px"
+              borderRadius="md"
+              marginLeft="10px"
+            >
+              <Image
+                src={preview}
+                alt={`Preview ${index}`}
+                maxWidth="100%"
+                maxHeight="130px"
+                marginRight="10px"
+                marginTop="auto"
+              />
+            </Box>
+          ))}
+
+          {/* Show a "More" card if there are more than 6 images */}
+          {images.length < 6 && (
+            <Box
+              height="150px"
+              width="150px"
+              textAlign="center"
+              overflowY="auto"
+              position="relative"
+              borderWidth="1px"
+              borderRadius="md"
+              marginLeft="10px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              onClick={handleClick1}
+              cursor="pointer"
+            >
+              <GrAdd style={{ width: "30px", height: "30px" }} />
+              Add Image
+            </Box>
+          )}
+          <input
+            id="fileInput"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            style={{ display: "none" }} // Hide the file input
+          />
+        </Grid>
       </Grid>
 
       {/* Property details form */}
