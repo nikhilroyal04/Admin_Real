@@ -14,10 +14,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  fetchAllUserData,
-  addUserData,
-} from "../../app/Slices/userSlice";
+import { fetchAllUserData, addUserData } from "../../app/Slices/userSlice";
 
 const AddUser = ({ isOpen, onClose }) => {
   const [newUser, setNewUser] = useState({
@@ -111,7 +108,9 @@ const AddUser = ({ isOpen, onClose }) => {
             <Input
               placeholder="Email"
               value={newUser.email}
-              onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+              onChange={(e) =>
+                setNewUser({ ...newUser, email: e.target.value })
+              }
               mb={3}
               borderColor="gray.300"
               aria-label="User Email"
@@ -120,7 +119,9 @@ const AddUser = ({ isOpen, onClose }) => {
               placeholder="Password"
               type="password"
               value={newUser.password}
-              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+              onChange={(e) =>
+                setNewUser({ ...newUser, password: e.target.value })
+              }
               mb={3}
               borderColor="gray.300"
               aria-label="User Password"
@@ -128,7 +129,9 @@ const AddUser = ({ isOpen, onClose }) => {
             <Input
               placeholder="Primary Phone"
               value={newUser.primaryPhone}
-              onChange={(e) => setNewUser({ ...newUser, primaryPhone: e.target.value })}
+              onChange={(e) =>
+                setNewUser({ ...newUser, primaryPhone: e.target.value })
+              }
               mb={3}
               borderColor="gray.300"
               aria-label="Primary Phone"
@@ -136,7 +139,9 @@ const AddUser = ({ isOpen, onClose }) => {
             <Input
               placeholder="Secondary Phone"
               value={newUser.secondaryPhone}
-              onChange={(e) => setNewUser({ ...newUser, secondaryPhone: e.target.value })}
+              onChange={(e) =>
+                setNewUser({ ...newUser, secondaryPhone: e.target.value })
+              }
               mb={3}
               borderColor="gray.300"
               aria-label="Secondary Phone"
@@ -148,18 +153,33 @@ const AddUser = ({ isOpen, onClose }) => {
               mb={3}
               borderColor="gray.300"
               aria-label="User Role"
+              sx={{
+                "& > option": {
+                  backgroundColor: "black",
+                  color: "white",
+                },
+              }}
             >
               <option value="admin">Admin</option>
               <option value="editor">Editor</option>
               <option value="viewer">Viewer</option>
             </Select>
+
             <Select
               placeholder="Select Status"
               value={newUser.status}
-              onChange={(e) => setNewUser({ ...newUser, status: e.target.value })}
+              onChange={(e) =>
+                setNewUser({ ...newUser, status: e.target.value })
+              }
               mb={3}
               borderColor="gray.300"
               aria-label="User Status"
+              sx={{
+                "& > option": {
+                  backgroundColor: "black",
+                  color: "white",
+                },
+              }}
             >
               {statuses.map((status) => (
                 <option key={status.value} value={status.value}>
@@ -167,10 +187,13 @@ const AddUser = ({ isOpen, onClose }) => {
                 </option>
               ))}
             </Select>
+
             <Input
               placeholder="Created By"
               value={newUser.createdBy}
-              onChange={(e) => setNewUser({ ...newUser, createdBy: e.target.value })}
+              onChange={(e) =>
+                setNewUser({ ...newUser, createdBy: e.target.value })
+              }
               mb={3}
               borderColor="gray.300"
               aria-label="Created By"
@@ -178,7 +201,9 @@ const AddUser = ({ isOpen, onClose }) => {
             <Input
               placeholder="Profile Photo URL"
               value={newUser.profilePhoto}
-              onChange={(e) => setNewUser({ ...newUser, profilePhoto: e.target.value })}
+              onChange={(e) =>
+                setNewUser({ ...newUser, profilePhoto: e.target.value })
+              }
               mb={3}
               borderColor="gray.300"
               aria-label="Profile Photo"
@@ -199,4 +224,3 @@ const AddUser = ({ isOpen, onClose }) => {
 };
 
 export default AddUser;
-

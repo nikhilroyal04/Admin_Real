@@ -50,6 +50,7 @@ const UserList = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = useSelector(selectTotalPages);
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -101,8 +102,6 @@ const UserList = () => {
       closeDeleteModal();
     }
   };
-
-  
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -196,7 +195,7 @@ const UserList = () => {
           justifyContent="flex-end"
           flexDirection={{ base: "column", md: "row" }}
         >
-          <InputGroup width={{ base: "100%", md: "250px" }} mr={4}>
+          <InputGroup width="250px" mr={4}>
             <InputLeftElement pointerEvents="none">
               <SearchIcon color="gray.300" />
             </InputLeftElement>
@@ -207,36 +206,54 @@ const UserList = () => {
               borderRadius={40}
             />
           </InputGroup>
-          <Menu>
+          <Menu _hover={{ border: "1px solid white", bg: "transparent" }}>
             <MenuButton
               as={Button}
               bg="black"
               _hover={{ bg: "transparent" }}
               border="1px solid gray"
               color="white"
+              mt={{ base: "15px", md: "0" }}
               rightIcon={<ChevronDownIcon color="white" />}
             >
-              Select Status
+              {selectedStatus || "Select Status"}
             </MenuButton>
             <MenuList bg="black" color="white">
-              <MenuItem onClick={() => setSelectedStatus("")} bg="black">
+              <MenuItem
+                onClick={() => setSelectedStatus("")}
+                border="1px solid gray"
+                bg="black"
+                _hover={{ border: "1px solid white", bg: "black" }}
+              >
                 All
               </MenuItem>
-              <MenuItem onClick={() => setSelectedStatus("Active")} bg="black">
+              <MenuItem
+                onClick={() => setSelectedStatus("Active")}
+                border="1px solid gray"
+                bg="black"
+                _hover={{ border: "1px solid white", bg: "black" }}
+              >
                 Active
               </MenuItem>
               <MenuItem
                 onClick={() => setSelectedStatus("Inactive")}
+                border="1px solid gray"
                 bg="black"
+                _hover={{ border: "1px solid white", bg: "black" }}
               >
                 Inactive
               </MenuItem>
-              <MenuItem onClick={() => setSelectedStatus("Pending")} bg="black">
+              <MenuItem
+                onClick={() => setSelectedStatus("Pending")}
+                bg="black"
+                border="1px solid gray"
+                _hover={{ border: "1px solid white", bg: "black" }}
+              >
                 Pending
               </MenuItem>
             </MenuList>
           </Menu>
-          <Box>
+            <Box>
             <Button
               onClick={() => openAddModal(true)}
               style={{ marginLeft: "10px" }}
