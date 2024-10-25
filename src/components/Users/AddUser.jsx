@@ -1,25 +1,26 @@
-import React, { useState } from "react";
 import {
   Box,
-  Button,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
   Input,
-  FormControl,
-  FormLabel,
-  Text,
-  Spinner,
+  Select,
+  Button,
+  useToast,
 } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addUserData } from "../../app/Slices/userSlice";
+import {
+  fetchAllUserData,
+  addUserData,
+  setUserError,
+} from "../../app/Slices/userSlice";
 
-const AddUser = () => {
-  const [users, setUsers] = useState([]);
+const AddUser = ({ isOpen, onClose }) => {
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
@@ -31,23 +32,22 @@ const AddUser = () => {
     createdBy: "",
     profilePhoto: "",
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
+  
   const dispatch = useDispatch();
+  const toast = useToast();
 
-  const handleClick = async () => {
-    if (!newUser.name || !newUser.email || !newUser.password) {
-      setError("Name, email, and password are required.");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
+  const handleAddUser = async () => {
     try {
-      await dispatch(addUserData(newUser));
-      setUsers([...users, { ...newUser, no: users.length + 1 }]);
+      await dispatch(addUserData(newUser)); // Directly pass newUser without updatedOn
+      toast({
+        title: "User added.",
+        description: "The user has been successfully added.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+  
+      // Reset newUser state
       setNewUser({
         name: "",
         email: "",
@@ -59,122 +59,122 @@ const AddUser = () => {
         createdBy: "",
         profilePhoto: "",
       });
-    } catch (err) {
-      setError("Failed to add user. Please try again.");
-    } finally {
-      setLoading(false);
+  
+      // Fetch all users again
+      dispatch(fetchAllUserData());
+  
+      onClose(); // Close the modal after adding the user
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add the user.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      console.error(error);
     }
   };
-
   return (
-    <Box p={5}>
-      <Box mb={4}>
-        <Button isLoading={loading} onClick={handleClick} leftIcon={<AddIcon />} colorScheme="teal">
-          Add User
-        </Button>
-      </Box>
-
-      {error && <Text color="red.500">{error}</Text>}
-
-      {/* Form Inputs for New User */}
-      <FormControl mb={4}>
-        <FormLabel>Name</FormLabel>
-        <Input
-          value={newUser.name}
-          onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-          placeholder="Enter name"
-        />
-
-        <FormLabel mt={4}>Email</FormLabel>
-        <Input
-          value={newUser.email}
-          onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-          placeholder="Enter email"
-        />
-
-        <FormLabel mt={4}>Password</FormLabel>
-        <Input
-          type="password"
-          value={newUser.password}
-          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-          placeholder="Enter password"
-        />
-
-        <FormLabel mt={4}>Primary Phone</FormLabel>
-        <Input
-          value={newUser.primaryPhone}
-          onChange={(e) => setNewUser({ ...newUser, primaryPhone: e.target.value })}
-          placeholder="Enter primary phone"
-        />
-
-        <FormLabel mt={4}>Secondary Phone</FormLabel>
-        <Input
-          value={newUser.secondaryPhone}
-          onChange={(e) => setNewUser({ ...newUser, secondaryPhone: e.target.value })}
-          placeholder="Enter secondary phone"
-        />
-
-        <FormLabel mt={4}>Role</FormLabel>
-        <Input
-          value={newUser.role}
-          onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-          placeholder="Enter role"
-        />
-
-        <FormLabel mt={4}>Status</FormLabel>
-        <Input
-          value={newUser.status}
-          onChange={(e) => setNewUser({ ...newUser, status: e.target.value })}
-          placeholder="Enter status"
-        />
-
-        <FormLabel mt={4}>Created By</FormLabel>
-        <Input
-          value={newUser.createdBy}
-          onChange={(e) => setNewUser({ ...newUser, createdBy: e.target.value })}
-          placeholder="Enter creator's name"
-        />
-
-        <FormLabel mt={4}>Profile Photo URL</FormLabel>
-        <Input
-          value={newUser.profilePhoto}
-          onChange={(e) => setNewUser({ ...newUser, profilePhoto: e.target.value })}
-          placeholder="Enter profile photo URL"
-        />
-      </FormControl>
-
-      <Table size="sm" mt={4}>
-        <Thead>
-          <Tr>
-            <Th textAlign="center">No.</Th>
-            <Th textAlign="center">Name</Th>
-            <Th textAlign="center">Email</Th>
-            <Th textAlign="center">Password</Th>
-            <Th textAlign="center">Primary Phone</Th>
-            <Th textAlign="center">Secondary Phone</Th>
-            <Th textAlign="center">Role</Th>
-            <Th textAlign="center">Status</Th>
-            <Th textAlign="center">Created By</Th>
-            <Th textAlign="center">Profile Photo</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {users.map((item, index) => (
-            <Tr key={index}>
-              <Td textAlign="center">{index + 1}</Td>
-              <Td textAlign="center">{item.name}</Td>
-              <Td textAlign="center">{item.email}</Td>
-              <Td textAlign="center">********</Td> {/* Masking password for security */}
-              <Td textAlign="center">{item.primaryPhone}</Td>
-              <Td textAlign="center">{item.secondaryPhone}</Td>
-              <Td textAlign="center">{item.role}</Td>
-              <Td textAlign="center">{item.status}</Td>
-              <Td textAlign="center">{item.createdBy}</Td>
-              <Td textAlign="center">{item.profilePhoto}</Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+    <Box>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent bg="black">
+          <ModalHeader color="white">Add New User</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody color="white">
+            <Input
+              placeholder="Name"
+              value={newUser.name}
+              onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+              mb={3}
+              borderColor="gray.300"
+              aria-label="User Name"
+            />
+            <Input
+              placeholder="Email"
+              value={newUser.email}
+              onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+              mb={3}
+              borderColor="gray.300"
+              aria-label="User Email"
+            />
+            <Input
+              placeholder="Password"
+              type="password"
+              value={newUser.password}
+              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+              mb={3}
+              borderColor="gray.300"
+              aria-label="User Password"
+            />
+            <Input
+              placeholder="Primary Phone"
+              value={newUser.primaryPhone}
+              onChange={(e) => setNewUser({ ...newUser, primaryPhone: e.target.value })}
+              mb={3}
+              borderColor="gray.300"
+              aria-label="Primary Phone"
+            />
+            <Input
+              placeholder="Secondary Phone"
+              value={newUser.secondaryPhone}
+              onChange={(e) => setNewUser({ ...newUser, secondaryPhone: e.target.value })}
+              mb={3}
+              borderColor="gray.300"
+              aria-label="Secondary Phone"
+            />
+            <Select
+              placeholder="Select Role"
+              value={newUser.role}
+              onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+              mb={3}
+              borderColor="gray.300"
+              aria-label="User Role"
+            >
+              <option value="admin">Admin</option>
+              <option value="editor">Editor</option>
+              <option value="viewer">Viewer</option>
+            </Select>
+            <Select
+              placeholder="Select Status"
+              value={newUser.status}
+              onChange={(e) => setNewUser({ ...newUser, status: e.target.value })}
+              mb={3}
+              borderColor="gray.300"
+              aria-label="User Status"
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="pending">Pending</option>
+            </Select>
+            <Input
+              placeholder="Created By"
+              value={newUser.createdBy}
+              onChange={(e) => setNewUser({ ...newUser, createdBy: e.target.value })}
+              mb={3}
+              borderColor="gray.300"
+              aria-label="Created By"
+            />
+            <Input
+              placeholder="Profile Photo URL"
+              value={newUser.profilePhoto}
+              onChange={(e) => setNewUser({ ...newUser, profilePhoto: e.target.value })}
+              mb={3}
+              borderColor="gray.300"
+              aria-label="Profile Photo"
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button color="white" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddUser} ml={3}>
+              Add User
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

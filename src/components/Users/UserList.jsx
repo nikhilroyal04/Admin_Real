@@ -25,14 +25,13 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  HStack,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
+  HStack,
 } from "@chakra-ui/react";
-import { AddIcon } from '@chakra-ui/icons';
-import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import { AddIcon, SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import {
   fetchAllUserData,
   deleteUserData,
@@ -40,44 +39,44 @@ import {
   selectTotalPages,
   selectUserLoading,
   selectUserError,
-} from "../../app/Slices/userSlice"; // Adjusted import for user slice
+} from "../../app/Slices/userSlice";
 import NoData from "../Not_Found/NoData";
-//import Error502 from "../Not_Found/Error502";
 import Loader from "../Not_Found/Loader";
+import AddUser from "./AddUser";
 
 const UserList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = useSelector(selectTotalPages);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const userData = useSelector(selectUserData);
-  const userError = useSelector(selectUserError);
   const userLoading = useSelector(selectUserLoading);
-  const totalPages = useSelector(selectTotalPages);
   const toast = useToast();
 
   useEffect(() => {
-    dispatch(fetchAllUserData(1, searchTerm)); // Fetch all user data on mount
-  }, [dispatch, searchTerm]);
+    dispatch(fetchAllUserData(currentPage, searchTerm));
+  }, [dispatch, currentPage, searchTerm]);
 
   const openDeleteModal = (id) => {
     setSelectedUserId(id);
-    setIsModalOpen(true);
+    setIsDeleteModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
     setSelectedUserId(null);
   };
 
-  const handleClick = () => {
-    navigate('/adduser'); // Navigate to the AddUser component
+  const openAddModal = (value) => {
+    setIsAddModalOpen(value);
   };
 
   const handleEdit = (id) => {
-    navigate(`/UserList/${id}`); // Navigate to user detail view
+    navigate(`/UserList/${id}`);
   };
 
   const handleDelete = async () => {
@@ -99,17 +98,71 @@ const UserList = () => {
         isClosable: true,
       });
     } finally {
-      closeModal();
+      closeDeleteModal();
     }
   };
 
-  const filteredUsers = userData.filter((item) =>
-    item.username.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-  // if (userError) {
-  //   return <Error502 />;
-  // }
+  const renderPaginationButtons = () => {
+    const pages = [];
+    if (currentPage > 1) {
+      pages.push(
+        <Button
+          key="prev"
+          onClick={() => handlePageChange(currentPage - 1)}
+          colorScheme="black"
+          variant="outline"
+          color="white"
+        >
+          Previous
+        </Button>
+      );
+    }
+
+    const pageRange = 2;
+    let startPage = Math.max(1, currentPage - pageRange);
+    let endPage = Math.min(totalPages, currentPage + pageRange);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <Button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          colorScheme={i === currentPage ? "teal" : "black"}
+          variant="solid"
+          color="white"
+        >
+          {i}
+        </Button>
+      );
+    }
+
+    if (currentPage < totalPages) {
+      pages.push(
+        <Button
+          key="next"
+          onClick={() => handlePageChange(currentPage + 1)}
+          colorScheme="black"
+          variant="outline"
+          color="white"
+        >
+          Next
+        </Button>
+      );
+    }
+
+    return pages;
+  };
+
+  const filteredUsers = userData.filter((item) =>
+    item.username && typeof item.username === "string"
+      ? item.username.toLowerCase().includes(searchTerm.toLowerCase())
+      : false
+  );
 
   return (
     <Box
@@ -125,10 +178,14 @@ const UserList = () => {
         mb={5}
         mt={4}
         flexWrap="wrap"
-        flexDirection={{ base: "column", md: "row" }}
       >
-        <Heading fontSize="30px" ml="10px" mb={2} flex="1">
-          UsersList
+        <Heading
+          fontSize={{ base: "24px", md: "30px" }}
+          ml="10px"
+          mb={2}
+          flex="1"
+        >
+          Users List
         </Heading>
         <Flex
           alignItems="center"
@@ -137,7 +194,7 @@ const UserList = () => {
           justifyContent="flex-end"
           flexDirection={{ base: "column", md: "row" }}
         >
-          <InputGroup width="250px" mr={4}>
+          <InputGroup width={{ base: "100%", md: "250px" }} mr={4}>
             <InputLeftElement pointerEvents="none">
               <SearchIcon color="gray.300" />
             </InputLeftElement>
@@ -148,138 +205,133 @@ const UserList = () => {
               borderRadius={40}
             />
           </InputGroup>
-          <Menu _hover={{ border: "1px solid white", bg: "transparent" }}>
+          <Menu>
             <MenuButton
               as={Button}
               bg="black"
               _hover={{ bg: "transparent" }}
               border="1px solid gray"
               color="white"
-              mt={{ base: "15px", md: "0" }}
               rightIcon={<ChevronDownIcon color="white" />}
             >
-              {selectedStatus || "Select Status"}
+              Select Status
             </MenuButton>
             <MenuList bg="black" color="white">
-              <MenuItem
-                onClick={() => setSelectedStatus("")}
-                border="1px solid gray"
-                bg="black"
-                _hover={{ border: "1px solid white", bg: "black" }}
-              >
+              <MenuItem onClick={() => setSelectedStatus("")} bg="black">
                 All
               </MenuItem>
-              <MenuItem
-                onClick={() => setSelectedStatus("Active")}
-                border="1px solid gray"
-                bg="black"
-                _hover={{ border: "1px solid white", bg: "black" }}
-              >
+              <MenuItem onClick={() => setSelectedStatus("Active")} bg="black">
                 Active
               </MenuItem>
               <MenuItem
                 onClick={() => setSelectedStatus("Inactive")}
-                border="1px solid gray"
                 bg="black"
-                _hover={{ border: "1px solid white", bg: "black" }}
               >
                 Inactive
               </MenuItem>
-              <MenuItem
-                onClick={() => setSelectedStatus("Pending")}
-                bg="black"
-                border="1px solid gray"
-                _hover={{ border: "1px solid white", bg: "black" }}
-              >
+              <MenuItem onClick={() => setSelectedStatus("Pending")} bg="black">
                 Pending
               </MenuItem>
             </MenuList>
           </Menu>
-          <Box ml={4}>
+          <Box>
             <Button
-              onClick={handleClick}
-              leftIcon={<AddIcon />}
-              colorScheme="teal"
+              onClick={() => openAddModal(true)}
+              style={{ marginLeft: "10px" }}
             >
-              AddUser
+              <AddIcon style={{ marginRight: "5px" }} />
+              Add User
             </Button>
+            <AddUser
+              isOpen={isAddModalOpen}
+              onClose={() => openAddModal(false)}
+            />
           </Box>
         </Flex>
       </Flex>
 
       <TableContainer>
-  {userLoading ? (
-    <Loader />
-  ) : (
-    <Table size="sm">
-      <Thead>
-        <Tr>
-          <Th textAlign="center">No.</Th>
-          <Th textAlign="center">Name</Th>
-          <Th textAlign="center">Email</Th>
-          <Th textAlign="center">Password</Th>
-          <Th textAlign="center">PrimaryPhone</Th>
-          <Th textAlign="center">SecondaryPhone</Th>
-          <Th textAlign="center">Role</Th>
-          <Th textAlign="center">Status</Th>
-          <Th textAlign="center">CreatedBy</Th>
-          <Th textAlign="center">ProfilePhoto</Th>
-          <Th textAlign="center">Action</Th>
-        </Tr>
-      </Thead>
-      <Tbody>
-        {filteredUsers.length === 0 ? (
-          <Tr>
-            <Td colSpan={9} textAlign="center">
-              <NoData />
-            </Td>
-          </Tr>
+        {userLoading ? (
+          <Loader />
         ) : (
-          filteredUsers.map((item, index) => (
-            <Tr key={item._id}>
-              <Td textAlign="center">{index + 1}</Td>
-              <Td textAlign="center">{item.name}</Td>
-              <Td textAlign="center">{item.email}</Td>
-              <Td textAlign="center">{item.password}</Td>
-              <Td textAlign="center">{item.primaryPhone}</Td>
-              <Td textAlign="center">{item.secondaryPhone}</Td>
-              <Td textAlign="center">{item.role}</Td>
-              <Td textAlign="center">{item.status}</Td>
-              <Td textAlign="center">{item.createdBy}</Td>
-              <Td textAlign="center">{item.profilePhoto}</Td>
-              <Td textAlign="center">
-                <Text color={item.status === "Active" ? "green.500" : "red.500"}>
-                  {item.status}
-                </Text>
-              </Td>
-              <Td textAlign="center">
-                <Button
-                  onClick={() => handleEdit(item._id)}
-                  colorScheme="teal"
-                  size="sm"
-                  mr={3}
-                >
-                  Edit
-                </Button>
-                <Button
-                  onClick={() => openDeleteModal(item._id)}
-                  colorScheme="red"
-                  size="sm"
-                >
-                  Delete
-                </Button>
-              </Td>
-            </Tr>
-          ))
+          <Table size={{ base: "sm", md: "md" }}>
+            <Thead>
+              <Tr>
+                {[
+                  "Name",
+                  "Email",
+                  "Password",
+                  "Primary Phone",
+                  "Secondary Phone",
+                  "Role",
+                  "Status",
+                  "Created By",
+                  "Profile Photo",
+                  "Action",
+                ].map((header) => (
+                  <Th key={header} textAlign="center">
+                    {header}
+                  </Th>
+                ))}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {filteredUsers.length === 0 ? (
+                <Tr>
+                  <Td colSpan={11} textAlign="center">
+                    <NoData />
+                  </Td>
+                </Tr>
+              ) : (
+                filteredUsers.map((item) => (
+                  <Tr key={item._id}>
+                    <Td textAlign="center">{item.name}</Td>
+                    <Td textAlign="center">{item.email}</Td>
+                    <Td textAlign="center">{item.password}</Td>
+                    <Td textAlign="center">{item.primaryPhone}</Td>
+                    <Td textAlign="center">{item.secondaryPhone}</Td>
+                    <Td textAlign="center">{item.role}</Td>
+                    <Td textAlign="center">
+                      <Text
+                        color={
+                          item.status === "Active" ? "green.500" : "red.500"
+                        }
+                      >
+                        {item.status}
+                      </Text>
+                    </Td>
+                    <Td textAlign="center">{item.createdBy}</Td>
+                    <Td textAlign="center">{item.profilePhoto}</Td>
+                    <Td textAlign="center">
+                      <Button
+                        onClick={() => handleEdit(item._id)}
+                        colorScheme="teal"
+                        size="sm"
+                        mr={3}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        onClick={() => openDeleteModal(item._id)}
+                        colorScheme="red"
+                        size="sm"
+                      >
+                        Delete
+                      </Button>
+                    </Td>
+                  </Tr>
+                ))
+              )}
+            </Tbody>
+          </Table>
         )}
-      </Tbody>
-    </Table>
-  )}
-</TableContainer>
+      </TableContainer>
 
+      <HStack spacing={4} justifyContent="center" mt={6}>
+        {renderPaginationButtons()}
+      </HStack>
 
-      {/* Delete Confirmation Modal */}
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <Modal isOpen={isDeleteModalOpen} onClose={closeDeleteModal}>
         <ModalOverlay />
         <ModalContent bg="black">
           <ModalHeader color="white">Confirm Deletion</ModalHeader>
@@ -289,7 +341,7 @@ const UserList = () => {
             undone.
           </ModalBody>
           <ModalFooter>
-            <Button color="white" variant="outline" onClick={closeModal}>
+            <Button color="white" variant="outline" onClick={closeDeleteModal}>
               Cancel
             </Button>
             <Button colorScheme="red" onClick={handleDelete} ml={3}>

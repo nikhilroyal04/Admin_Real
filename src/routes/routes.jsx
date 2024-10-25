@@ -4,6 +4,7 @@ import FullLayout from "../layouts/FullLayouts";
 import Dashboard from "../components/Dashboard/Dashboard";
 import Roles from "../components/Roles/Roles";
 import Users from "../components/Users/UserList";
+import AddUser from "../components/Users/AddUser";
 import Properties from "../components/Properties/Properties";
 import Leads from "../components/Leads/Leads";
 import Contact from "../components/Contact/Contact";
@@ -12,9 +13,7 @@ import { AnimatePresence } from "framer-motion";
 import Not_Found from "../components/Not_Found/Not_Found";
 import Logout from "../components/Login/Logout";
 import PropertyView from "../components/Properties/PropertyView";
-import UserList from "../components/Users/UserList";
-import AddUser from "../components/Users/AddUser";
-//import EditUser from "../components/Users/EditUser"
+
 
 
 const Routing = () => {
@@ -31,11 +30,9 @@ const Routing = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/roles" element={<Roles />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/adduser" element={<AddUser />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/properties/:id" element={<PropertyView />} />
-          <Route path="/userlist" element={<UserList />} />
-          <Route path="/adduser" element={<AddUser />} />
-          {/* <Route path="/userList/:id" element={<EditUser />} /> */}
           <Route path="/leads" element={<Leads />} />
           <Route path="/contact" element={<Contact />} />
         </Route>

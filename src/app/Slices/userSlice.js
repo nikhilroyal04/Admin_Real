@@ -53,7 +53,7 @@ export const fetchAllUserData =
     dispatch(setUserLoading());
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}user/getAllUsers`,
+        `${import.meta.env.VITE_BASE_URL}user/allUsers`,
         {
           params: {
             page,
@@ -74,11 +74,11 @@ export const fetchAllUserData =
     }
   };
 
-export const addUserData = (formData) => async (dispatch) => {
+export const addUserData = (data) => async (dispatch) => {
   try {
     await axios.post(
       `${import.meta.env.VITE_BASE_URL}user/addUser`,
-      formData,
+      data,
       {
         headers: {
           "Content-Type": "application/json",
