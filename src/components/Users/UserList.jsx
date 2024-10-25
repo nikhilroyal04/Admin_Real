@@ -102,6 +102,8 @@ const UserList = () => {
     }
   };
 
+  
+
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -294,7 +296,13 @@ const UserList = () => {
                     <Td textAlign="center">
                       <Text
                         color={
-                          item.status === "Active" ? "green.500" : "red.500"
+                          item.status === "Active"
+                            ? "green.500"
+                            : item.status === "Inactive"
+                            ? "orange.500"
+                            : item.status === "Pending"
+                            ? "yellow.500"
+                            : "red.500" // Default color for unexpected statuses
                         }
                       >
                         {item.status}

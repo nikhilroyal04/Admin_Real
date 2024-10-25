@@ -17,7 +17,6 @@ import { useDispatch } from "react-redux";
 import {
   fetchAllUserData,
   addUserData,
-  setUserError,
 } from "../../app/Slices/userSlice";
 
 const AddUser = ({ isOpen, onClose }) => {
@@ -32,13 +31,30 @@ const AddUser = ({ isOpen, onClose }) => {
     createdBy: "",
     profilePhoto: "",
   });
-  
+
+  const statuses = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+    { value: "pending", label: "Pending" },
+  ];
+
   const dispatch = useDispatch();
   const toast = useToast();
 
   const handleAddUser = async () => {
+    if (!newUser.status) {
+      toast({
+        title: "Validation Error",
+        description: "Please select a user status.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return; // Exit the function if status is not selected
+    }
+
     try {
-      await dispatch(addUserData(newUser)); // Directly pass newUser without updatedOn
+      await dispatch(addUserData(newUser));
       toast({
         title: "User added.",
         description: "The user has been successfully added.",
@@ -46,7 +62,7 @@ const AddUser = ({ isOpen, onClose }) => {
         duration: 3000,
         isClosable: true,
       });
-  
+
       // Reset newUser state
       setNewUser({
         name: "",
@@ -59,10 +75,10 @@ const AddUser = ({ isOpen, onClose }) => {
         createdBy: "",
         profilePhoto: "",
       });
-  
+
       // Fetch all users again
       dispatch(fetchAllUserData());
-  
+
       onClose(); // Close the modal after adding the user
     } catch (error) {
       toast({
@@ -75,6 +91,7 @@ const AddUser = ({ isOpen, onClose }) => {
       console.error(error);
     }
   };
+
   return (
     <Box>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -144,9 +161,11 @@ const AddUser = ({ isOpen, onClose }) => {
               borderColor="gray.300"
               aria-label="User Status"
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
+              {statuses.map((status) => (
+                <option key={status.value} value={status.value}>
+                  {status.label}
+                </option>
+              ))}
             </Select>
             <Input
               placeholder="Created By"
@@ -180,3 +199,4 @@ const AddUser = ({ isOpen, onClose }) => {
 };
 
 export default AddUser;
+
