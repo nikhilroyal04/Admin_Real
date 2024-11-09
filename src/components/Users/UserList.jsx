@@ -34,6 +34,7 @@ import {
 import { AddIcon, SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import {
   fetchAllUserData,
+  addUserData,
   deleteUserData,
   selectUserData,
   selectTotalPages,
@@ -47,15 +48,16 @@ import AddUser from "./AddUser";
 const UserList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = useSelector(selectTotalPages);
-  const [selectedStatus, setSelectedStatus] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const userData = useSelector(selectUserData);
   const userLoading = useSelector(selectUserLoading);
+
   const toast = useToast();
 
   useEffect(() => {
@@ -78,6 +80,29 @@ const UserList = () => {
 
   const handleEdit = (id) => {
     navigate(`/UserList/${id}`);
+  };
+
+  const handleAddUser = async (userData) => {
+    try {
+      await dispatch(addUserData(userData)); // Assuming addUserData handles all user information
+      toast({
+        title: "User added.",
+        description: "The user has been successfully added.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add the user.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      closeAddUserModal(); // Close the modal after the operation
+    }
   };
 
   const handleDelete = async () => {
@@ -253,7 +278,7 @@ const UserList = () => {
               </MenuItem>
             </MenuList>
           </Menu>
-            <Box>
+          <Box>
             <Button
               onClick={() => openAddModal(true)}
               style={{ marginLeft: "10px" }}
@@ -264,6 +289,7 @@ const UserList = () => {
             <AddUser
               isOpen={isAddModalOpen}
               onClose={() => openAddModal(false)}
+              onAddUser={handleAddUser} // Ensure the modal has a way to trigger adding a user
             />
           </Box>
         </Flex>
@@ -284,8 +310,8 @@ const UserList = () => {
                   "Secondary Phone",
                   "Role",
                   "Status",
-                  "Created By",
                   "Profile Photo",
+                  "Created By",
                   "Action",
                 ].map((header) => (
                   <Th key={header} textAlign="center">
@@ -313,20 +339,14 @@ const UserList = () => {
                     <Td textAlign="center">
                       <Text
                         color={
-                          item.status === "Active"
-                            ? "green.500"
-                            : item.status === "Inactive"
-                            ? "orange.500"
-                            : item.status === "Pending"
-                            ? "yellow.500"
-                            : "red.500" // Default color for unexpected statuses
+                          item.status === "Active" ? "green.500" : "red.500"
                         }
                       >
                         {item.status}
                       </Text>
                     </Td>
-                    <Td textAlign="center">{item.createdBy}</Td>
                     <Td textAlign="center">{item.profilePhoto}</Td>
+                    <Td textAlign="center">{item.createdBy}</Td>
                     <Td textAlign="center">
                       <Button
                         onClick={() => handleEdit(item._id)}
