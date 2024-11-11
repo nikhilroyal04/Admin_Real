@@ -20,6 +20,7 @@ import {
   setUserError,
 } from "../../app/Slices/userSlice";
 
+
 const AddUser = ({ isOpen, onClose }) => {
   const [newUser, setNewUser] = useState({
     name: "",

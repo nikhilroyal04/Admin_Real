@@ -64,6 +64,40 @@ const UserList = () => {
     dispatch(fetchAllUserData(currentPage, searchTerm));
   }, [dispatch, currentPage, searchTerm]);
 
+  const openAddModal = (value) => {
+    setIsAddModalOpen(value);
+  };
+
+const handleAddUser = async (userData) => {
+  try {
+    // // Dispatch action to add user
+    // await dispatch(addUserData(userData)); 
+    
+    // Dispatch action to fetch updated user list
+    await dispatch(fetchallUserData()); // Assuming you have a fetchUserData action to get the list
+
+    toast({
+      title: "User added.",
+      description: "The user has been successfully added.",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: "Failed to add the user.",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+  } finally {
+    // Close the modal after the operation
+    closeAddUserModal();
+  }
+};
+
+
   const openDeleteModal = (id) => {
     setSelectedUserId(id);
     setIsDeleteModalOpen(true);
@@ -74,35 +108,8 @@ const UserList = () => {
     setSelectedUserId(null);
   };
 
-  const openAddModal = (value) => {
-    setIsAddModalOpen(value);
-  };
-
   const handleEdit = (id) => {
     navigate(`/UserList/${id}`);
-  };
-
-  const handleAddUser = async (userData) => {
-    try {
-      await dispatch(addUserData(userData)); // Assuming addUserData handles all user information
-      toast({
-        title: "User added.",
-        description: "The user has been successfully added.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add the user.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      closeAddUserModal(); // Close the modal after the operation
-    }
   };
 
   const handleDelete = async () => {
