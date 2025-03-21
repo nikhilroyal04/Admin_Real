@@ -1,19 +1,62 @@
-import React from "react";
-import { Text } from "@chakra-ui/react";
+import { Box, Text, IconButton, Avatar } from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
 
-export default function Header() {
+const Header = ({ onOpen, isMenuOpen }) => {
   return (
-    <Text
-      fontSize="2xl"
-      fontWeight="bold"
-      textAlign="center"
+    <Box
+      mt={6}
+      borderRadius={50}
+      as="header"
+      width={{ base: "100%", md: "calc(100% - 250px)" }}
+      ml={{ base: 0, md: "250px" }}
+      height="80px"
+      bg="black"
+      p={4}
       display="flex"
-      justifyContent="center"
       alignItems="center"
-      height="20vh"
-      color="red.500"
+      position="fixed"
+      top="0"
+      zIndex="999"
+      borderColor="gray.200"
     >
-      Design your header
-    </Text>
+      <IconButton
+        icon={<HamburgerIcon fontSize={26} />}
+        display={{ base: "inline-flex", md: "none" }}
+        onClick={onOpen}
+        aria-label="Open menu"
+        aria-expanded={isMenuOpen}
+        aria-controls="menu"
+        mr={4}
+        bg="none"
+        color="white"
+        variant="none"
+      />
+
+      <Text fontSize="2xl" color="white" fontWeight="600" flex="1" ml={2}>
+        Dashboard
+      </Text>
+
+      {/* Hide "Welcome User" text on small screens */}
+      <Text
+        display={{ base: "none", md: "block" }}
+        ml={3}
+        mr={6}
+        fontSize="xl"
+        fontWeight="500"
+        color="white"
+      >
+        Welcome User
+      </Text>
+
+      <Box display="flex" alignItems="center" ml="auto">
+        <Avatar
+          src="https://bit.ly/dan-abramov"
+          size="md"
+          aria-label="User profile"
+        />
+      </Box>
+    </Box>
   );
-}
+};
+
+export default Header;
